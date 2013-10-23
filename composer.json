@@ -1,0 +1,22 @@
+{
+    "name": "getsky/phalcon-bootstrap",
+    "type": "library",
+    "description": "Bootstrap Component for Phalcon",
+    "keywords": [ "framework", "phalcon", "bootstrap" ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "JimmDiGrizli",
+            "email": "getmansk-y@yandex.ru"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "ext-phalcon": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "GetSky\\Phalcon\\Bootstrap": "src/"
+        }
+    }
+}
