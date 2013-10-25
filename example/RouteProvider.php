@@ -1,6 +1,5 @@
 <?php
-
-use GetSky\Phalcon\Bootstrap\Provider;
+use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Mvc\Router;
 
 class RouteProvider implements Provider
