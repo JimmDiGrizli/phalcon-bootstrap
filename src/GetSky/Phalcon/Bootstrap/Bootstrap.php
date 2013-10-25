@@ -15,16 +15,22 @@ class Bootstrap extends Application
 {
     const DEFAULT_CONFIG = '/Resources/config/options.ini';
     const DEFAULT_ENVIRONMENT = 'dev';
-    const DEFAULT_SERVICES_PATH = '/app/{environment}/config/services.ini';
 
     /**
      * @var Config|null
      */
     private $config;
+
     /**
      * @var Config|null
      */
-    private $services;
+    private $envServices;
+
+    /**
+     * @var Config|null
+     */
+    private $mainServices;
+
     /**
      * @var string|null
      */
@@ -43,11 +49,11 @@ class Bootstrap extends Application
     }
 
     /**
-     * @param string $path
+     * @param string $config
      */
-    public function setConfig($path)
+    public function setConfig($config)
     {
-        $this->config = new Ini($path);
+        $this->config = new Ini($config);
     }
 
     /**
@@ -58,21 +64,39 @@ class Bootstrap extends Application
         return $this->config;
     }
 
+    /**
+     * @param string $mainServices
+     */
+    public function setMainServices($mainServices)
+    {
+        try {
+            $this->mainServices = new Ini ($mainServices);
+        } catch (\Exception $e) {
+        }
+    }
 
     /**
-     * @param string $path
+     * @return null|\Phalcon\Config
      */
-    public function setService($path)
+    public function getMainServices()
     {
-        $this->services = new Ini($path);
+        return $this->mainServices;
+    }
+
+    /**
+     * @param string $envServices
+     */
+    public function setEnvServices($envServices)
+    {
+        $this->envServices = new Ini($envServices);
     }
 
     /**
      * @return Config|null
      */
-    public function getServices()
+    public function getEnvServices()
     {
-        return $this->services;
+        return $this->envServices;
     }
 
     /**
@@ -122,17 +146,33 @@ class Bootstrap extends Application
             );
         }
 
-        if ($this->getServices() === null) {
-            $this->setService(
+        if ($this->getMainServices() === null) {
+            $this->setMainServices(
+                $this->getConfig()->get(
+                    'path.main.services',
+                    null
+                )
+
+            );
+        }
+
+        if ($this->getEnvServices() === null) {
+            $this->setEnvServices(
                 str_replace(
                     "{environment}",
                     $this->getEnvironment(),
                     $this->getConfig()->get(
                         'path.services',
-                        self::DEFAULT_SERVICES_PATH
+                        null
                     )
                 )
             );
+        }
+
+        if ($this->mainServices !== null && $this->envServices !== null) {
+            $this->mainServices->merge($this->envServices);
+        } elseif ($this->envServices !== null) {
+            $this->mainServices = $this->envServices;
         }
     }
 
@@ -140,7 +180,7 @@ class Bootstrap extends Application
     {
         $this->getDI()->setShared(
             'registrant',
-            new Registrant($this->services)
+            new Registrant($this->mainServices)
         );
         $this->getDI()->get('registrant')->registration();
     }
