@@ -12,8 +12,16 @@
     ],
     "require": {
         "php": ">=5.4",
-        "ext-phalcon": "*"
+        "ext-phalcon": "*",
+
+        "getsky/phalcon-autoload-di": "@dev"
     },
+    "repositories":[
+        {
+            "type":"git",
+            "url":"http://github.com/JimmDiGrizli/phalcon-autoload-di"
+        }
+    ],
     "autoload": {
         "psr-0": {
             "GetSky\\Phalcon\\Bootstrap": "src/"

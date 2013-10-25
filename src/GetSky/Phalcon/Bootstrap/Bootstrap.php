@@ -1,6 +1,7 @@
 <?php
 namespace GetSky\Phalcon\Bootstrap;
 
+use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
 use Phalcon\Config;
 use Phalcon\DiInterface;
@@ -12,9 +13,8 @@ use Phalcon\Mvc\Application;
  */
 class Bootstrap extends Application
 {
-
-    const DEFAULT_ENVIRONMENT = 'dev';
     const DEFAULT_CONFIG = '/Resources/config/options.ini';
+    const DEFAULT_ENVIRONMENT = 'dev';
     const DEFAULT_SERVICES_PATH = '/app/{environment}/config/services.ini';
 
     /**
@@ -45,17 +45,34 @@ class Bootstrap extends Application
     /**
      * @param string $path
      */
-    public function setConfigIni($path)
+    public function setConfig($path)
     {
         $this->config = new Ini($path);
     }
 
     /**
+     * @return Config|null
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+
+    /**
      * @param string $path
      */
-    public function setServiceIni($path)
+    public function setService($path)
     {
         $this->services = new Ini($path);
+    }
+
+    /**
+     * @return Config|null
+     */
+    public function getServices()
+    {
+        return $this->services;
     }
 
     /**
@@ -63,10 +80,20 @@ class Bootstrap extends Application
      */
     public function setEnvironment($environment)
     {
-        $this->services = $environment;
+        $this->environment = $environment;
     }
 
     /**
+     * @return Config|null
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+
+
+    /**
+     * @param bool $hide
      * @return string
      */
     public function run($hide = false)
@@ -82,23 +109,25 @@ class Bootstrap extends Application
 
     protected function boot()
     {
-        if ($this->config === null) {
-            $this->setConfigIni(self::DEFAULT_CONFIG);
+        if ($this->getConfig() === null) {
+            $this->setConfig(self::DEFAULT_CONFIG);
         }
 
-        if ($this->environment === null) {
-            $this->environment = $this->config->get(
-                'environment',
-                self::DEFAULT_ENVIRONMENT
+        if ($this->getEnvironment() === null) {
+            $this->setEnvironment(
+                $this->getConfig()->get(
+                    'environment',
+                    self::DEFAULT_ENVIRONMENT
+                )
             );
         }
 
-        if ($this->services === null) {
-            $this->setServiceIni(
+        if ($this->getServices() === null) {
+            $this->setService(
                 str_replace(
                     "{environment}",
-                    $this->environment,
-                    $this->config->get(
+                    $this->getEnvironment(),
+                    $this->getConfig()->get(
                         'path.services',
                         self::DEFAULT_SERVICES_PATH
                     )
@@ -109,29 +138,10 @@ class Bootstrap extends Application
 
     protected function initServices()
     {
-        /**
-         * @var Config $service
-         */
-        foreach ($this->services as $key => $service) {
-            $class = $service->get('provider');
-            $param = str_replace(
-                "{environment}",
-                $this->environment,
-                $service->get('param')
-            );
-            $shared = $service->get('shared', false);
-
-            $provider = new $class($param);
-
-            if ($provider instanceof Provider) {
-                $this->getDI()[$key] = $provider->getServices();
-            } else {
-                if ($shared === true) {
-                    $this->getDI()->setShared($key, $provider);
-                } else {
-                    $this->getDI()[$key] = $provider;
-                }
-            }
-        }
+        $this->getDI()->setShared(
+            'registrant',
+            new Registrant($this->services)
+        );
+        $this->getDI()->get('registrant')->registration();
     }
 } 
