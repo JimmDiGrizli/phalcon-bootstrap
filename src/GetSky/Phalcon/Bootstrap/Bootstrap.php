@@ -15,22 +15,26 @@ class Bootstrap extends Application
 {
     const DEFAULT_CONFIG = '/Resources/config/options.ini';
     const DEFAULT_ENVIRONMENT = 'dev';
-
     /**
      * @var Config|null
      */
     private $config;
-
+    /**
+     * @var Config|null
+     */
+    private $mainOptions;
+    /**
+     * @var Config|null
+     */
+    private $envOptions;
     /**
      * @var Config|null
      */
     private $envServices;
-
     /**
      * @var Config|null
      */
     private $mainServices;
-
     /**
      * @var string|null
      */
@@ -47,74 +51,6 @@ class Bootstrap extends Application
             $this->setEnvironment($environment);
         }
     }
-
-    /**
-     * @param string $config
-     */
-    public function setConfig($config)
-    {
-        $this->config = new Ini($config);
-    }
-
-    /**
-     * @return Config|null
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param string $mainServices
-     */
-    public function setMainServices($mainServices)
-    {
-        try {
-            $this->mainServices = new Ini ($mainServices);
-        } catch (\Exception $e) {
-        }
-    }
-
-    /**
-     * @return null|\Phalcon\Config
-     */
-    public function getMainServices()
-    {
-        return $this->mainServices;
-    }
-
-    /**
-     * @param string $envServices
-     */
-    public function setEnvServices($envServices)
-    {
-        $this->envServices = new Ini($envServices);
-    }
-
-    /**
-     * @return Config|null
-     */
-    public function getEnvServices()
-    {
-        return $this->envServices;
-    }
-
-    /**
-     * @param string $environment
-     */
-    public function setEnvironment($environment)
-    {
-        $this->environment = $environment;
-    }
-
-    /**
-     * @return Config|null
-     */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
-
 
     /**
      * @param bool $hide
@@ -146,13 +82,34 @@ class Bootstrap extends Application
             );
         }
 
+        if ($this->getMainOptions() === null) {
+            $this->setMainOptions(
+                $this->getConfig()->get(
+                    'path.main.options',
+                    null
+                )
+            );
+        }
+
+        if ($this->getEnvOptions() === null) {
+            $this->setEnvOptions(
+                str_replace(
+                    "{environment}",
+                    $this->getEnvironment(),
+                    $this->getConfig()->get(
+                        'path.options',
+                        null
+                    )
+                )
+            );
+        }
+
         if ($this->getMainServices() === null) {
             $this->setMainServices(
                 $this->getConfig()->get(
                     'path.main.services',
                     null
                 )
-
             );
         }
 
@@ -174,6 +131,108 @@ class Bootstrap extends Application
         } elseif ($this->envServices !== null) {
             $this->mainServices = $this->envServices;
         }
+
+        if ($this->mainOptions !== null && $this->envOptions !== null) {
+            $this->mainOptions->merge($this->envOptions);
+        } elseif ($this->envOptions !== null) {
+            $this->mainOptions = $this->envOptions;
+        }
+    }
+
+    /**
+     * @return Config|null
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param string $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = new Ini($config);
+    }
+
+    /**
+     * @return Config|null
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+
+    /**
+     * @param string $environment
+     */
+    public function setEnvironment($environment)
+    {
+        $this->environment = $environment;
+    }
+
+    /**
+     * @return null|Config
+     */
+    public function getMainOptions()
+    {
+        return $this->mainOptions;
+    }
+
+    /**
+     * @param string $mainOptions
+     */
+    public function setMainOptions($mainOptions)
+    {
+        $this->mainOptions = new Ini($mainOptions);
+    }
+
+    /**
+     * @return null|Config
+     */
+    public function getEnvOptions()
+    {
+        return $this->envOptions;
+    }
+
+    /**
+     * @param string $envOptions
+     */
+    public function setEnvOptions($envOptions)
+    {
+        $this->envOptions = new Ini($envOptions);
+    }
+
+    /**
+     * @return null|\Phalcon\Config
+     */
+    public function getMainServices()
+    {
+        return $this->mainServices;
+    }
+
+    /**
+     * @param string $mainServices
+     */
+    public function setMainServices($mainServices)
+    {
+        $this->mainServices = new Ini ($mainServices);
+    }
+
+    /**
+     * @return Config|null
+     */
+    public function getEnvServices()
+    {
+        return $this->envServices;
+    }
+
+    /**
+     * @param string $envServices
+     */
+    public function setEnvServices($envServices)
+    {
+        $this->envServices = new Ini($envServices);
     }
 
     protected function initServices()
@@ -182,6 +241,7 @@ class Bootstrap extends Application
             'registrant',
             new Registrant($this->mainServices)
         );
+        $this->getDI()->setShared("options", $this->mainOptions);
         $this->getDI()->get('registrant')->registration();
     }
 } 
