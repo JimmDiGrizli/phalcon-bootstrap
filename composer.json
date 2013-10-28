@@ -14,14 +14,20 @@
         "php": ">=5.4",
         "ext-phalcon": "*",
 
-        "getsky/phalcon-autoload-di": "@dev"
+        "getsky/phalcon-autoload-services": "1.0.*"
     },
     "repositories":[
         {
             "type":"git",
-            "url":"http://github.com/JimmDiGrizli/phalcon-autoload-di"
+            "url":"http://github.com/JimmDiGrizli/phalcon-autoload-services"
         }
     ],
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-0": {
             "GetSky\\Phalcon\\Bootstrap": "src/"
