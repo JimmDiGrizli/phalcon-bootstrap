@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '\..\vendor\autoload.php';
-require_once 'RouteProvider.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once '../RouteProvider.php';
 
 (new \Phalcon\Debug())->listen(true, true);
 

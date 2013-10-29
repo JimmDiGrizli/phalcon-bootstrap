@@ -13,32 +13,45 @@ use Phalcon\Mvc\Application;
  */
 class Bootstrap extends Application
 {
+    /**
+     * Default path of the application configuration file
+     */
     const DEFAULT_CONFIG = '/Resources/config/options.ini';
+
+    /**
+     * Default application environment
+     */
     const DEFAULT_ENVIRONMENT = 'dev';
+
     /**
-     * @var Config|null
+     * The path to the application configuration file
+     * @var string|null
      */
-    private $config;
+    private $pathConfig;
+
     /**
-     * @var Config|null
-     */
-    private $mainOptions;
-    /**
-     * @var Config|null
-     */
-    private $envOptions;
-    /**
-     * @var Config|null
-     */
-    private $envServices;
-    /**
-     * @var Config|null
-     */
-    private $mainServices;
-    /**
+     * The variable indicates the application environment
      * @var string|null
      */
     private $environment;
+
+    /**
+     * Application configuration
+     * @var Config|null
+     */
+    private $config;
+
+    /**
+     * The application configuration
+     * @var Config|null
+     */
+    private $options;
+
+    /**
+     * The configuration of services for the dependency injection
+     * @var Config|null
+     */
+    private $services;
 
     /**
      * @param DiInterface $di
@@ -48,11 +61,34 @@ class Bootstrap extends Application
     {
         parent::__construct($di);
         if ($environment !== null) {
-            $this->setEnvironment($environment);
+            $this->$environment = $environment;
         }
     }
 
     /**
+     * The method gives way to a configuration application
+     * @return string
+     */
+    public function getPathConfig()
+    {
+        if ($this->pathConfig === null) {
+            return $this::DEFAULT_CONFIG;
+        } else {
+            return $this->pathConfig;
+        }
+    }
+
+    /**
+     * The method sets a new path configuration file
+     * @param string $pathConfig
+     */
+    public function setPathConfig($pathConfig)
+    {
+        $this->pathConfig = $pathConfig;
+    }
+
+    /**
+     * Running the application
      * @param bool $hide
      * @return string
      */
@@ -67,181 +103,50 @@ class Bootstrap extends Application
         }
     }
 
+    /**
+     * Loads the settings option and a list of services for the application
+     */
     protected function boot()
     {
-        if ($this->getConfig() === null) {
-            $this->setConfig(self::DEFAULT_CONFIG);
-        }
+        $this->config = new Ini($this->getPathConfig());
 
-        if ($this->getEnvironment() === null) {
-            $this->setEnvironment(
-                $this->getConfig()->get(
-                    'environment',
-                    self::DEFAULT_ENVIRONMENT
-                )
+        if ($this->environment === null) {
+            $this->environment = $this->config->get(
+                'environment',
+                self::DEFAULT_ENVIRONMENT
             );
         }
 
-        if ($this->getMainOptions() === null) {
-            $this->setMainOptions(
-                $this->getConfig()->get(
-                    'path.main.options',
-                    null
-                )
-            );
-        }
-
-        if ($this->getEnvOptions() === null) {
-            $this->setEnvOptions(
-                str_replace(
-                    "{environment}",
-                    $this->getEnvironment(),
-                    $this->getConfig()->get(
-                        'path.options',
-                        null
-                    )
-                )
-            );
-        }
-
-        if ($this->getMainServices() === null) {
-            $this->setMainServices(
-                $this->getConfig()->get(
-                    'path.main.services',
-                    null
-                )
-            );
-        }
-
-        if ($this->getEnvServices() === null) {
-            $this->setEnvServices(
-                str_replace(
-                    "{environment}",
-                    $this->getEnvironment(),
-                    $this->getConfig()->get(
-                        'path.services',
-                        null
-                    )
-                )
-            );
-        }
-
-        if ($this->mainServices !== null && $this->envServices !== null) {
-            $this->mainServices->merge($this->envServices);
-        } elseif ($this->envServices !== null) {
-            $this->mainServices = $this->envServices;
-        }
-
-        if ($this->mainOptions !== null && $this->envOptions !== null) {
-            $this->mainOptions->merge($this->envOptions);
-        } elseif ($this->envOptions !== null) {
-            $this->mainOptions = $this->envOptions;
+        /**
+         * @var Config[] $configs
+         */
+        $configs = [];
+        foreach ($this->config->get('path') as $x => $paths) {
+            foreach ($paths as $y => $path) {
+                $path = str_replace("{environment}", $this->environment, $path);
+                if (is_readable($path)) {
+                    $ini = new Ini ($path);
+                    if ($configs[$x] === null) {
+                        $configs[$x] = $ini;
+                    } else {
+                        $configs[$x]->merge($ini);
+                    }
+                }
+            }
+            $this->$x = $configs[$x];
         }
     }
 
     /**
-     * @return Config|null
+     * Initializing services in dependency injection
      */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param string $config
-     */
-    public function setConfig($config)
-    {
-        $this->config = new Ini($config);
-    }
-
-    /**
-     * @return Config|null
-     */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
-
-    /**
-     * @param string $environment
-     */
-    public function setEnvironment($environment)
-    {
-        $this->environment = $environment;
-    }
-
-    /**
-     * @return null|Config
-     */
-    public function getMainOptions()
-    {
-        return $this->mainOptions;
-    }
-
-    /**
-     * @param string $mainOptions
-     */
-    public function setMainOptions($mainOptions)
-    {
-        $this->mainOptions = new Ini($mainOptions);
-    }
-
-    /**
-     * @return null|Config
-     */
-    public function getEnvOptions()
-    {
-        return $this->envOptions;
-    }
-
-    /**
-     * @param string $envOptions
-     */
-    public function setEnvOptions($envOptions)
-    {
-        $this->envOptions = new Ini($envOptions);
-    }
-
-    /**
-     * @return null|\Phalcon\Config
-     */
-    public function getMainServices()
-    {
-        return $this->mainServices;
-    }
-
-    /**
-     * @param string $mainServices
-     */
-    public function setMainServices($mainServices)
-    {
-        $this->mainServices = new Ini ($mainServices);
-    }
-
-    /**
-     * @return Config|null
-     */
-    public function getEnvServices()
-    {
-        return $this->envServices;
-    }
-
-    /**
-     * @param string $envServices
-     */
-    public function setEnvServices($envServices)
-    {
-        $this->envServices = new Ini($envServices);
-    }
-
     protected function initServices()
     {
         $this->getDI()->setShared(
             'registrant',
-            new Registrant($this->mainServices)
+            new Registrant($this->services)
         );
-        $this->getDI()->setShared("options", $this->mainOptions);
+        $this->getDI()->setShared("options", $this->options);
         $this->getDI()->get('registrant')->registration();
     }
 } 
