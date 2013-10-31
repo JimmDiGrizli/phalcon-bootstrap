@@ -122,7 +122,7 @@ class Bootstrap extends Application
          */
         $configs = [];
         foreach ($this->config->get('path') as $x => $paths) {
-            foreach ($paths as $y => $path) {
+            foreach ($paths as $path) {
                 $path = str_replace("{environment}", $this->environment, $path);
                 if (is_readable($path)) {
                     $ini = new Ini ($path);
