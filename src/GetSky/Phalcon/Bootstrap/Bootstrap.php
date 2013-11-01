@@ -126,7 +126,7 @@ class Bootstrap extends Application
                 $path = str_replace("{environment}", $this->environment, $path);
                 if (is_readable($path)) {
                     $ini = new Ini ($path);
-                    if ($configs[$x] === null) {
+                    if (!isset($configs[$x])) {
                         $configs[$x] = $ini;
                     } else {
                         $configs[$x]->merge($ini);
