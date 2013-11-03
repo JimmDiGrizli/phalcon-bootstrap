@@ -5,6 +5,7 @@ use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
 use Phalcon\Config;
 use Phalcon\DiInterface;
+use Phalcon\Loader;
 use Phalcon\Mvc\Application;
 
 /**
@@ -17,36 +18,30 @@ class Bootstrap extends Application
      * Default path of the application configuration file
      */
     const DEFAULT_CONFIG = '/Resources/config/options.ini';
-
     /**
      * Default application environment
      */
     const DEFAULT_ENVIRONMENT = 'dev';
-
     /**
      * The path to the application configuration file
      * @var string|null
      */
     private $pathConfig;
-
     /**
      * The variable indicates the application environment
      * @var string|null
      */
     private $environment;
-
     /**
      * Application configuration
      * @var Config|null
      */
     private $config;
-
     /**
      * The application configuration
      * @var Config|null
      */
     private $options;
-
     /**
      * The configuration of services for the dependency injection
      * @var Config|null
@@ -66,28 +61,6 @@ class Bootstrap extends Application
     }
 
     /**
-     * The method gives way to a configuration application
-     * @return string
-     */
-    public function getPathConfig()
-    {
-        if ($this->pathConfig === null) {
-            return $this::DEFAULT_CONFIG;
-        } else {
-            return $this->pathConfig;
-        }
-    }
-
-    /**
-     * The method sets a new path configuration file
-     * @param string $pathConfig
-     */
-    public function setPathConfig($pathConfig)
-    {
-        $this->pathConfig = $pathConfig;
-    }
-
-    /**
      * Running the application
      * @param bool $hide
      * @return string
@@ -95,6 +68,7 @@ class Bootstrap extends Application
     public function run($hide = false)
     {
         $this->boot();
+        $this->initModules();
         $this->initServices();
         if ($hide === false) {
             return $this->handle()->getContent();
@@ -135,6 +109,59 @@ class Bootstrap extends Application
             }
             $this->$x = $configs[$x];
         }
+    }
+
+    /**
+     * The method gives way to a configuration application
+     * @return string
+     */
+    public function getPathConfig()
+    {
+        if ($this->pathConfig === null) {
+            return $this::DEFAULT_CONFIG;
+        } else {
+            return $this->pathConfig;
+        }
+    }
+
+    /**
+     * The method sets a new path configuration file
+     * @param string $pathConfig
+     */
+    public function setPathConfig($pathConfig)
+    {
+        $this->pathConfig = $pathConfig;
+    }
+
+    /**
+     * Initializing modules
+     */
+    protected function initModules()
+    {
+        $loader = new Loader();
+        $modules = $this->options->get('modules');
+        $pathFile = $this->config->get('modules')->get('path');
+        $module = $this->config->get('modules')->get('module');
+        $dirs = $this->config->get('modules')->get('dir');
+        $arrayModules = [];
+
+        foreach ($modules as $name => $namespace) {
+
+            $path = $pathFile . str_replace('\\', '/', $namespace);
+            $arrayModules[$name] = array(
+                'className' => $namespace . '\\' . substr($module, 0, -4),
+                'path' => $path . '/' . $module
+            );
+
+            $arrayDir = [];
+            foreach ($dirs as $key => $dir) {
+                $arrayDir[$namespace . '\\' . $key] = $path . '/' . $dir . '/';
+            }
+
+            $loader->registerNamespaces($arrayDir, true);
+        }
+
+        $this->registerModules($arrayModules);
     }
 
     /**

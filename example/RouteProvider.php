@@ -11,6 +11,7 @@ class RouteProvider implements Provider
     public function getServices()
     {
         return function () {
+
             $router = new Router();
             return $router;
         };
