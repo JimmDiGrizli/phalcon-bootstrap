@@ -1,4 +1,6 @@
 <?php
+namespace App\Providers;
+
 use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Mvc\Router;
 

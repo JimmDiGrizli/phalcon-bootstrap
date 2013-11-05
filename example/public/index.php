@@ -1,11 +1,10 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once '../RouteProvider.php';
 
 (new \Phalcon\Debug())->listen(true, true);
 
-use \Phalcon\DI\FactoryDefault;
-use \GetSky\Phalcon\Bootstrap\Bootstrap;
+use GetSky\Phalcon\Bootstrap\Bootstrap;
+use Phalcon\DI\FactoryDefault;
 
 try {
     $app = new Bootstrap(new FactoryDefault());
