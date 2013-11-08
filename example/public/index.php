@@ -8,10 +8,10 @@ use Phalcon\DI\FactoryDefault;
 
 try {
     $app = new Bootstrap(new FactoryDefault());
-    echo $app->run('false');
+    echo $app->run();
     echo '<pre>';
     $di = $app->getDI();
-    var_dump($di->getService('route'));
+    var_dump($di->getService('router'));
     echo '<br>';
     var_dump($di->getService('request'));
     echo '<br>';

@@ -1,9 +1,9 @@
 <?php
-use Phalcon\Loader;
+namespace GetSky\BackendModule;
+
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
-class Module implements ModuleDefinitionInterface
-{
+class Module implements ModuleDefinitionInterface {
 
     /**
      * Registers an autoloader related to the module
