@@ -47,10 +47,6 @@ class Bootstrap extends Application
      * @var Config|null
      */
     private $services;
-    /**
-     * @var Loader
-     */
-    private $loader;
 
     /**
      * @param DiInterface $di
@@ -62,7 +58,6 @@ class Bootstrap extends Application
         if ($environment !== null) {
             $this->$environment = $environment;
         }
-        $this->loader = new Loader();
     }
 
     /**
@@ -75,7 +70,6 @@ class Bootstrap extends Application
         $this->boot();
         $this->initModules();
         $this->initNamespace();
-        $this->loader->register();
         $this->initServices();
         if ($hide === false) {
             return $this->handle()->getContent();
@@ -149,9 +143,7 @@ class Bootstrap extends Application
         if ($modules !== null) {
             $pathFile = $this->config->get('modules')->get('path');
             $module = $this->config->get('modules')->get('module');
-            $dirs = $this->config->get('modules')->get('dir');
             $arrayModules = [];
-            $arrayDir = [];
 
             foreach ($modules as $name => $namespace) {
 
@@ -160,22 +152,20 @@ class Bootstrap extends Application
                     'className' => $namespace . '\\' . substr($module, 0, -4),
                     'path' => $path . '/' . $module
                 );
-
-                foreach ($dirs as $key => $dir) {
-                    $arrayDir[$namespace . '\\' . $key] = $path . '/' . $dir . '/';
-                }
             }
-
-            $this->loader->registerNamespaces($arrayDir, true);
             $this->registerModules($arrayModules);
         }
     }
 
     protected function initNamespace()
     {
+        $loader = new Loader();
+
         foreach ($this->config->get('app') as $namespace => $path) {
-            $this->loader->registerNamespaces(array($namespace => $path), true);
+            $loader->registerNamespaces(array($namespace => $path), true);
         }
+
+        $loader->register();
     }
 
     /**

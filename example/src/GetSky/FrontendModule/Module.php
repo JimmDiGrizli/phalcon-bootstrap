@@ -2,6 +2,7 @@
 namespace GetSky\FrontendModule;
 
 use Phalcon\Config\Adapter\Ini;
+use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 use GetSky\Phalcon\AutoloadServices\Registrant;
 
@@ -14,6 +15,15 @@ class Module implements ModuleDefinitionInterface
      */
     public function registerAutoloaders()
     {
+        $loader = new Loader();
+
+        $loader->registerNamespaces(array(
+                'GetSky\FrontendModule\Controllers' => __DIR__ . '/Controllers/',
+                'GetSky\FrontendModule\Models' => __DIR__ . '/Models/',
+                'GetSky\FrontendModule\Providers' => __DIR__ . '/Providers/'
+            ));
+
+        $loader->register();
     }
 
     /**
