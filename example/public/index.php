@@ -11,6 +11,11 @@ try {
     echo $app->run();
     echo '<pre>';
     $di = $app->getDI();
+
+    print_r(
+        'environment: ' . $di->get('app-status')->get('environment') . '<br>'
+    );
+
     var_dump($di->getService('router'));
     echo '<br>';
     var_dump($di->getService('request'));
