@@ -16,10 +16,10 @@
 
         "getsky/phalcon-autoload-services": "1.0.*"
     },
-    "repositories":[
+    "repositories": [
         {
-            "type":"git",
-            "url":"http://github.com/JimmDiGrizli/phalcon-autoload-services"
+            "type": "git",
+            "url": "http://github.com/JimmDiGrizli/phalcon-autoload-services"
         }
     ],
     "extra": {

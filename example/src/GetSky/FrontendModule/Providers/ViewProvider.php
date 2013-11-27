@@ -4,14 +4,15 @@ namespace GetSky\FrontendModule\Providers;
 use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Mvc\View;
 
-class ViewProvider implements Provider {
+class ViewProvider implements Provider
+{
 
     /**
      * @return mixed
      */
     public function getServices()
     {
-        return function() {
+        return function () {
             $view = new View();
             $view->setViewsDir('/views/');
             return $view;
