@@ -178,7 +178,10 @@ class Bootstrap extends Application
             new Registrant($this->services)
         );
 
-        $this->getDI()->setShared("options", $this->options);
+        $this->getDI()->setShared(
+            $this->config->get('config-name'),
+            $this->options
+        );
 
         $status = new Config(
             array(
