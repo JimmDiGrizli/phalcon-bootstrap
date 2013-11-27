@@ -189,7 +189,6 @@ class Bootstrap extends Application
             )
         );
 
-        print_r($this->options);
         $this->getDI()->setShared(
             $this->config->get('config-name'),
             $this->options
