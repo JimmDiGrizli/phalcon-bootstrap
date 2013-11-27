@@ -178,19 +178,22 @@ class Bootstrap extends Application
             new Registrant($this->services)
         );
 
+        $this->options->merge(
+            new Config(
+                array(
+                    'app-status'=>array(
+                        'environment' => $this->environment,
+                        'config' => $this->config
+                    )
+                )
+            )
+        );
+
+        print_r($this->options);
         $this->getDI()->setShared(
             $this->config->get('config-name'),
             $this->options
         );
-
-        $status = new Config(
-            array(
-                'environment' => $this->environment,
-                'config' => $this->config
-            )
-        );
-        $this->getDI()->setShared("app-status", $status);
-
         $this->getDI()->get('registrant')->registration();
     }
 } 

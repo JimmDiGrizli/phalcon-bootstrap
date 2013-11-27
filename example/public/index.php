@@ -13,7 +13,9 @@ try {
     $di = $app->getDI();
 
     print_r(
-        'environment: ' . $di->get('app-status')->get('environment') . '<br>'
+        'environment: ' .
+        $di->get('options')->get('app-status')->get('environment') .
+        '<br>'
     );
 
     var_dump($di->getService('router'));
