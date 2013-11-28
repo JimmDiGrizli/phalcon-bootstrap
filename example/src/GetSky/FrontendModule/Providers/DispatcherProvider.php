@@ -4,19 +4,16 @@ namespace GetSky\FrontendModule\Providers;
 use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Mvc\Dispatcher;
 
-class DispatcherProvider implements Provider
-{
+class DispatcherProvider implements Provider {
 
     /**
-     * @return mixed
+     * @return callable
      */
     public function getServices()
     {
-        return function () {
+        return function() {
             $dispatcher = new Dispatcher();
-            $dispatcher->setDefaultNamespace(
-                "GetSky\\FrontendModule\\Controllers"
-            );
+            $dispatcher->setDefaultNamespace("GetSky\\FrontendModule\\Controllers");
             return $dispatcher;
         };
     }

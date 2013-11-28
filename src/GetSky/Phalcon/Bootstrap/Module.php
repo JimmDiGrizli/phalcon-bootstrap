@@ -4,6 +4,7 @@ namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
+use Phalcon\Config;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
@@ -25,7 +26,7 @@ abstract class Module implements ModuleDefinitionInterface
                 0,
                 strripos(get_class($this), '\\')
             );
-            print $namespace;
+
             $loader = new Loader();
 
             $loader->registerNamespaces(array($namespace => $this->dir . '/'));
@@ -42,6 +43,22 @@ abstract class Module implements ModuleDefinitionInterface
      */
     public function registerServices($dependencyInjector)
     {
+        /**
+         * @var Config $options
+         */
+        $options = $dependencyInjector->get('options');
+
+        $options->merge(
+            new Config(
+                array(
+                    'module-options' => new Ini(
+                            $this->dir . '/Resources/config/options.ini'
+                        )
+                )
+            )
+        );
+        $dependencyInjector->setShared('options', $options);
+
         /**
          * @var Registrant $registrant
          */

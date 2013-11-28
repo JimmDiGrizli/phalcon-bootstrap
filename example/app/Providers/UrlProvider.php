@@ -5,8 +5,7 @@ use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Config;
 use Phalcon\Mvc\Url;
 
-class UrlProvider implements Provider
-{
+class UrlProvider implements Provider {
 
     /**
      * @var Config
@@ -25,7 +24,7 @@ class UrlProvider implements Provider
     {
         $default = $this->options->get('app')->get('base_uri');
 
-        return function () use ($default) {
+        return function() use ($default) {
             $url = new Url();
             $url->setBaseUri($default);
             return $url;
