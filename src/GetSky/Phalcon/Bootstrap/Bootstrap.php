@@ -148,10 +148,10 @@ class Bootstrap extends Application
             foreach ($modules as $name => $namespace) {
 
                 $path = $pathFile . str_replace('\\', '/', $namespace);
-                $arrayModules[$name] = array(
+                $arrayModules[$name] = [
                     'className' => $namespace . '\\' . substr($module, 0, -4),
                     'path' => $path . '/' . $module
-                );
+                ];
             }
             $this->registerModules($arrayModules);
         }
@@ -162,7 +162,7 @@ class Bootstrap extends Application
         $loader = new Loader();
 
         foreach ($this->config->get('app') as $namespace => $path) {
-            $loader->registerNamespaces(array($namespace => $path), true);
+            $loader->registerNamespaces([$namespace => $path], true);
         }
 
         $loader->register();
@@ -180,12 +180,12 @@ class Bootstrap extends Application
 
         $this->options->merge(
             new Config(
-                array(
-                    'app-status' => array(
+                [
+                    'app-status' => [
                         'environment' => $this->environment,
                         'config' => $this->config
-                    )
-                )
+                    ]
+                ]
             )
         );
 

@@ -29,7 +29,7 @@ abstract class Module implements ModuleDefinitionInterface
 
             $loader = new Loader();
 
-            $loader->registerNamespaces(array($namespace => $this->dir . '/'));
+            $loader->registerNamespaces([$namespace => $this->dir . '/']);
 
             $loader->register();
 
@@ -50,11 +50,11 @@ abstract class Module implements ModuleDefinitionInterface
 
         $options->merge(
             new Config(
-                array(
+                [
                     'module-options' => new Ini(
                             $this->dir . '/Resources/config/options.ini'
                         )
-                )
+                ]
             )
         );
         $dependencyInjector->setShared('options', $options);
