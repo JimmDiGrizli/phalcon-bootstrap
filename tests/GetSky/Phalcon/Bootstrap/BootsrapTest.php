@@ -6,13 +6,21 @@ use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
 use PHPUnit_Framework_TestCase;
 
-class RegistrantTest extends PHPUnit_Framework_TestCase
+class BootstrapTest extends PHPUnit_Framework_TestCase
 {
 
     /**
      * @var Bootstrap
      */
     protected $bootstrap;
+
+    public function testIsApplication()
+    {
+        $this->assertInstanceOf(
+            'Phalcon\Mvc\Application',
+            $this->bootstrap
+        );
+    }
 
     public function testSetGetPathConfig()
     {
@@ -22,8 +30,6 @@ class RegistrantTest extends PHPUnit_Framework_TestCase
         $test = "test.ini";
         $this->bootstrap->setPathConfig($test);
         $this->assertSame($test, $this->bootstrap->getPathConfig());
-
-
     }
 
     protected function setUp()
