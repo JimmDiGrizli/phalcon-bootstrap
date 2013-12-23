@@ -17,7 +17,7 @@ class Bootstrap extends Application
     /**
      * Default path of the application configuration file
      */
-    const DEFAULT_CONFIG = '/Resources/config/config.ini';
+    const DEFAULT_CONFIG = 'Resources/config/config.ini';
     /**
      * Default application environment
      */
