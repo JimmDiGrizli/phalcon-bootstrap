@@ -22,6 +22,12 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testConstOfBootstrap()
+    {
+        $this->assertSame('Resources/config/config.ini', Bootstrap::DEFAULT_CONFIG);
+        $this->assertSame('dev', Bootstrap::DEFAULT_ENVIRONMENT);
+    }
+
     public function testSetGetPathConfig()
     {
         $default = $this->bootstrap->getPathConfig();
