@@ -56,7 +56,7 @@ class Bootstrap extends Application
     {
         parent::__construct($di);
         if ($environment !== null) {
-            $this->$environment = $environment;
+            $this->environment = $environment;
         }
     }
 
