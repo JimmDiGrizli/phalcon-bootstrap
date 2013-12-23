@@ -28,6 +28,17 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $this->assertSame('dev', Bootstrap::DEFAULT_ENVIRONMENT);
     }
 
+    public function testChangingEnvironment()
+    {
+        $ref = new \ReflectionClass('GetSky\Phalcon\Bootstrap\Bootstrap');
+        $object = $ref->newInstance(new FactoryDefault(),'prod');
+
+        $environment = $ref->getProperty('environment');
+        $environment->setAccessible(true);
+
+        $this->assertSame('prod', $environment->getValue($object));
+    }
+
     public function testSetGetPathConfig()
     {
         $default = $this->bootstrap->getPathConfig();
