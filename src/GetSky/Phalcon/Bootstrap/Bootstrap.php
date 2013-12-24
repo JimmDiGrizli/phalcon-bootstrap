@@ -4,7 +4,7 @@ namespace GetSky\Phalcon\Bootstrap;
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
 use Phalcon\Config;
-use Phalcon\DiInterface;
+use Phalcon\DI;
 use Phalcon\Loader;
 use Phalcon\Mvc\Application;
 
@@ -49,10 +49,10 @@ class Bootstrap extends Application
     private $services;
 
     /**
-     * @param DiInterface $di
+     * @param DI $di
      * @param null|string $environment
      */
-    public function __construct(DiInterface $di, $environment = null)
+    public function __construct(DI $di, $environment = null)
     {
         parent::__construct($di);
         if ($environment !== null) {
@@ -80,6 +80,7 @@ class Bootstrap extends Application
 
     /**
      * Loads the settings option and a list of services for the application
+     * @throw PathNotFoundException
      */
     protected function boot()
     {
@@ -90,6 +91,10 @@ class Bootstrap extends Application
                 'environment',
                 self::DEFAULT_ENVIRONMENT
             );
+        }
+
+        if (count($this->config->get('path')) === 0) {
+            throw new PathNotFoundException('Not found paths in config file');
         }
 
         /**
@@ -157,6 +162,9 @@ class Bootstrap extends Application
         }
     }
 
+    /**
+     * Initializing namespace of application
+     */
     protected function initNamespace()
     {
         $loader = new Loader();
