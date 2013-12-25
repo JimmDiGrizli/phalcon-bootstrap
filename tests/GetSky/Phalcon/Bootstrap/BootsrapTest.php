@@ -107,10 +107,19 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $method->invoke($object);
 
         $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/services.ini');
+        $iniProd = new Config\Adapter\Ini(
+            'GetSky/Phalcon/Bootstrap/environment/tests/config/services.ini'
+        );
+        $ini->merge($iniProd);
         $this->assertEquals($ini,$sevices->getValue($object));
 
         $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/options.ini');
+        $iniProd = new Config\Adapter\Ini(
+            'GetSky/Phalcon/Bootstrap/environment/tests/config/options.ini'
+        );
+        $ini->merge($iniProd);
         $this->assertEquals($ini,$options->getValue($object));
+
     }
 
     protected function setUp()

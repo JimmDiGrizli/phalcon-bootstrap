@@ -115,6 +115,7 @@ class Bootstrap extends Application
             }
             $this->$x = $configs[$x];
         }
+
     }
 
     /**
@@ -169,7 +170,7 @@ class Bootstrap extends Application
     {
         $loader = new Loader();
 
-        foreach ($this->config->get('app') as $namespace => $path) {
+        foreach ($this->config->get('prod') as $namespace => $path) {
             $loader->registerNamespaces([$namespace => $path], true);
         }
 
@@ -189,7 +190,7 @@ class Bootstrap extends Application
         $this->options->merge(
             new Config(
                 [
-                    'app-status' => [
+                    'prod-status' => [
                         'environment' => $this->environment,
                         'config' => $this->config
                     ]

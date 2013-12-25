@@ -22,7 +22,7 @@ class UrlProvider implements Provider {
      */
     public function getServices()
     {
-        $default = $this->options->get('app')->get('base_uri');
+        $default = $this->options->get('prod')->get('base_uri');
 
         return function() use ($default) {
             $url = new Url();

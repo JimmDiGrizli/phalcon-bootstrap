@@ -23,7 +23,7 @@ class RouterProvider implements Provider
      */
     public function getServices()
     {
-        $default = $this->options->get('app')->get('def_module');
+        $default = $this->options->get('prod')->get('def_module');
         $modules = $this->options->get('modules');
 
         return function () use ($default, $modules) {
