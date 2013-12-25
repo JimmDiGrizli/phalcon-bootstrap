@@ -18,10 +18,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
     public function testIsApplication()
     {
-        $this->assertInstanceOf(
-            'Phalcon\Mvc\Application',
-            $this->bootstrap
-        );
+        $this->assertInstanceOf('Phalcon\Mvc\Application', $this->bootstrap);
     }
 
     public function testConstOfBootstrap()
@@ -90,6 +87,30 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $object = $ref->newInstance(new FactoryDefault());
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/configException.ini');
         $method->invoke($object);
+    }
+
+    public function testBoot()
+    {
+        $ref = new \ReflectionClass(self::TEST_CLASS);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+
+        $sevices = $ref->getProperty('services');
+        $sevices->setAccessible(true);
+
+        $options = $ref->getProperty('options');
+        $options->setAccessible(true);
+
+        $object = $ref->newInstance(new FactoryDefault());
+        $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
+        $method->invoke($object);
+
+        $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/services.ini');
+        $this->assertEquals($ini,$sevices->getValue($object));
+
+        $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/options.ini');
+        $this->assertEquals($ini,$options->getValue($object));
     }
 
     protected function setUp()
