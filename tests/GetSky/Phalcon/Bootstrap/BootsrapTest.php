@@ -77,6 +77,21 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $this->assertSame('dev', $environment->getValue($object));
     }
 
+    /**
+     * @expectedException \GetSky\Phalcon\Bootstrap\PathNotFoundException
+     */
+    public function testPathNotFoundException()
+    {
+        $ref = new \ReflectionClass(self::TEST_CLASS);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+
+        $object = $ref->newInstance(new FactoryDefault());
+        $object->setPathConfig('GetSky/Phalcon/Bootstrap/configException.ini');
+        $method->invoke($object);
+    }
+
     protected function setUp()
     {
         $this->bootstrap = new Bootstrap(new FactoryDefault());
