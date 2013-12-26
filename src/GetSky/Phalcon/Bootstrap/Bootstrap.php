@@ -170,7 +170,7 @@ class Bootstrap extends Application
     {
         $loader = new Loader();
 
-        foreach ($this->config->get('prod') as $namespace => $path) {
+        foreach ($this->config->get('app') as $namespace => $path) {
             $loader->registerNamespaces([$namespace => $path], true);
         }
 
