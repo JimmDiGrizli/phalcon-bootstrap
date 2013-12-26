@@ -5,6 +5,7 @@ use GetSky\Phalcon\Bootstrap\Bootstrap;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
 use PHPUnit_Framework_TestCase;
+use ReflectionClass;
 use ReflectionMethod;
 
 class BootstrapTest extends PHPUnit_Framework_TestCase
@@ -29,8 +30,8 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
     public function testChangingEnvironment()
     {
-        $ref = new \ReflectionClass(self::TEST_CLASS);
-        $object = $ref->newInstance(new FactoryDefault(),'prod');
+        $ref = new ReflectionClass(self::TEST_CLASS);
+        $object = $ref->newInstance(new FactoryDefault(), 'prod');
 
         $environment = $ref->getProperty('environment');
         $environment->setAccessible(true);
@@ -50,7 +51,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
     public function testChangingEnvironmentInBootMethod()
     {
-        $ref = new \ReflectionClass(self::TEST_CLASS);
+        $ref = new ReflectionClass(self::TEST_CLASS);
 
         $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
         $method->setAccessible(true);
@@ -63,7 +64,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $method->invoke($object);
         $this->assertSame('tests', $environment->getValue($object));
 
-        $object = $ref->newInstance(new FactoryDefault(),'prod');
+        $object = $ref->newInstance(new FactoryDefault(), 'prod');
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
         $method->invoke($object);
         $this->assertSame('prod', $environment->getValue($object));
@@ -79,7 +80,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
      */
     public function testPathNotFoundException()
     {
-        $ref = new \ReflectionClass(self::TEST_CLASS);
+        $ref = new ReflectionClass(self::TEST_CLASS);
 
         $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
         $method->setAccessible(true);
@@ -91,16 +92,19 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
     public function testBoot()
     {
-        $ref = new \ReflectionClass(self::TEST_CLASS);
+        $ref = new ReflectionClass(self::TEST_CLASS);
 
         $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
         $method->setAccessible(true);
 
-        $sevices = $ref->getProperty('services');
-        $sevices->setAccessible(true);
+        $services = $ref->getProperty('services');
+        $services->setAccessible(true);
 
         $options = $ref->getProperty('options');
         $options->setAccessible(true);
+
+        $config = $ref->getProperty('config');
+        $config->setAccessible(true);
 
         $object = $ref->newInstance(new FactoryDefault());
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
@@ -111,15 +115,17 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
             'GetSky/Phalcon/Bootstrap/environment/tests/config/services.ini'
         );
         $ini->merge($iniProd);
-        $this->assertEquals($ini,$sevices->getValue($object));
+        $this->assertEquals($ini, $services->getValue($object));
 
         $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/options.ini');
         $iniProd = new Config\Adapter\Ini(
             'GetSky/Phalcon/Bootstrap/environment/tests/config/options.ini'
         );
         $ini->merge($iniProd);
-        $this->assertEquals($ini,$options->getValue($object));
+        $this->assertEquals($ini, $options->getValue($object));
 
+        $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/config.ini');
+        $this->assertEquals($ini, $config->getValue($object));
     }
 
     protected function setUp()
