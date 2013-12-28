@@ -145,7 +145,12 @@ class Bootstrap extends Application
      */
     protected function initModules()
     {
-        $modules = $this->options->get('modules', null);
+        $modules = null;
+
+        if ($this->options !== null) {
+            $modules = $this->options->get('modules', null);
+        }
+
         if ($modules !== null) {
             $pathFile = $this->config->get('modules')->get('path');
             $module = $this->config->get('modules')->get('module');
