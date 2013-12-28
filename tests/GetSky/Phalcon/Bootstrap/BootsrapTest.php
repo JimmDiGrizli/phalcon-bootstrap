@@ -1,6 +1,7 @@
 <?php
 namespace GetSky\Phalcon\AutoloadServices\Tests;
 
+use GetSky\BackendModule\Module;
 use GetSky\Phalcon\Bootstrap\Bootstrap;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
@@ -70,7 +71,9 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $this->assertSame('prod', $environment->getValue($object));
 
         $object = $ref->newInstance(new FactoryDefault());
-        $object->setPathConfig('GetSky/Phalcon/Bootstrap/configNoEnv.ini');
+        $object->setPathConfig(
+            'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
+        );
         $method->invoke($object);
         $this->assertSame('dev', $environment->getValue($object));
     }
@@ -126,6 +129,46 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/config.ini');
         $this->assertEquals($ini, $config->getValue($object));
+    }
+
+    public function testInitModules()
+    {
+        $ref = new ReflectionClass(self::TEST_CLASS);
+
+        $this->bootstrap->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+        $method->invoke($this->bootstrap);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initModules');
+        $method->setAccessible(true);
+        $method->invoke($this->bootstrap);
+
+        $this->assertEquals(
+            [
+                'frontend'=>
+                    [
+                        'className'=> 'GetSky\FrontendModule\Module',
+                        'path' => '/src/GetSky/FrontendModule/Module.php'
+                    ]
+            ],
+            $this->bootstrap->getModules()
+        );
+
+        $object = $ref->newInstance(new FactoryDefault(),'dev');
+        $object->setPathConfig(
+            'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
+        );
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initModules');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $this->assertNull($object->getModules());
     }
 
     protected function setUp()
