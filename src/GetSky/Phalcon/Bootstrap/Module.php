@@ -1,7 +1,6 @@
 <?php
 namespace GetSky\Phalcon\Bootstrap;
 
-
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
 use Phalcon\Config;
@@ -17,7 +16,6 @@ abstract class Module implements ModuleDefinitionInterface
      * Registers an autoloader related to the module
      *
      */
-
     public function registerAutoloaders()
     {
         if ($this->dir != null) {
@@ -38,7 +36,6 @@ abstract class Module implements ModuleDefinitionInterface
 
     /**
      * Registers an autoloader related to the module
-     *
      * @param \Phalcon\DiInterface $dependencyInjector
      */
     public function registerServices($dependencyInjector)
@@ -68,5 +65,4 @@ abstract class Module implements ModuleDefinitionInterface
         );
         $registrant->registration();
     }
-
 } 

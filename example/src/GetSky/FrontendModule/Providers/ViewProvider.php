@@ -39,15 +39,15 @@ class ViewProvider implements Provider
                             $volt = new Volt($view);
 
                             $path = str_replace(
-                                "{environment}",
+                                '{environment}',
                                 $environment,
                                 $config->get('path')
                             );
 
-                            $options = array(
+                            $options = [
                                 'compiledPath' => $path,
                                 'compiledSeparator' => '_',
-                            );
+                            ];
 
                             if ($config->debug != 1) {
                                 $options['compileAlways'] = true;

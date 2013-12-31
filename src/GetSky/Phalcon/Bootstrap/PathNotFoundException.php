@@ -1,6 +1,8 @@
 <?php
 namespace GetSky\Phalcon\Bootstrap;
 
-class PathNotFoundException extends \Exception {
+use Exception;
+
+class PathNotFoundException extends Exception {
 
 } 

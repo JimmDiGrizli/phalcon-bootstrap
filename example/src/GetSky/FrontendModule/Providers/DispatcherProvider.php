@@ -13,7 +13,7 @@ class DispatcherProvider implements Provider {
     {
         return function() {
             $dispatcher = new Dispatcher();
-            $dispatcher->setDefaultNamespace("GetSky\\FrontendModule\\Controllers");
+            $dispatcher->setDefaultNamespace('GetSky\FrontendModule\Controllers');
             return $dispatcher;
         };
     }
