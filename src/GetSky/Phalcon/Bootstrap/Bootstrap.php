@@ -14,39 +14,52 @@ use Phalcon\Mvc\Application;
  */
 class Bootstrap extends Application
 {
+
     /**
      * Default path of the application configuration file
      */
     const DEFAULT_CONFIG = 'Resources/config/config.ini';
+
     /**
      * Default application environment
      */
     const DEFAULT_ENVIRONMENT = 'dev';
+
     /**
      * The path to the application configuration file
      * @var string|null
      */
     private $pathConfig;
+
     /**
      * The variable indicates the application environment
      * @var string|null
      */
     private $environment;
+
     /**
      * Application configuration
      * @var Config|null
      */
     private $config;
+
     /**
      * The application configuration
      * @var Config|null
      */
     private $options;
+
     /**
      * The configuration of services for the dependency injection
      * @var Config|null
      */
     private $services;
+
+    /**
+     * The loader of namespace
+     * @var Loader|null
+     */
+    private $loader;
 
     /**
      * @param DI $di
@@ -173,13 +186,23 @@ class Bootstrap extends Application
      */
     protected function initNamespace()
     {
-        $loader = new Loader();
-
-        foreach ($this->config->get('app') as $namespace => $path) {
-            $loader->registerNamespaces([$namespace => $path], true);
+        if ($this->loader === null) {
+            $this->loader = new Loader();
         }
 
-        $loader->register();
+        foreach ($this->config->get('app') as $namespace => $path) {
+            $this->loader->registerNamespaces([$namespace => $path], true);
+        }
+
+        $this->loader->register();
+    }
+
+    /**
+     * @return null|Loader
+     */
+    public function getLoader()
+    {
+        return $this->loader;
     }
 
     /**
