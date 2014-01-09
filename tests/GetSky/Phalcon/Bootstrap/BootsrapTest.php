@@ -5,6 +5,7 @@ use GetSky\BackendModule\Module;
 use GetSky\Phalcon\Bootstrap\Bootstrap;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
+use Phalcon\Loader;
 use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -169,6 +170,43 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $method->invoke($object);
 
         $this->assertNull($object->getModules());
+    }
+
+    public function testInitNamespace()
+    {
+        $ref = new ReflectionClass(self::TEST_CLASS);
+
+        $this->bootstrap->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+        $method->invoke($this->bootstrap);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initNamespace');
+        $method->setAccessible(true);
+        $method->invoke($this->bootstrap);
+
+        $this->assertEquals(
+            [
+                'App\Providers' => '../../app/Providers/',
+                'App\Services' => '../../app/Services/'
+            ],
+            $this->bootstrap->getLoader()->getNamespaces()
+        );
+
+        $object = $ref->newInstance(new FactoryDefault(), 'dev');
+        $object->setPathConfig(
+            'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
+        );
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initNamespace');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $this->assertNull($object->getLoader()->getNamespaces());
     }
 
     protected function setUp()
