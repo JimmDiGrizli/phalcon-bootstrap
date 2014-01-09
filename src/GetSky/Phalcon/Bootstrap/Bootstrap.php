@@ -190,11 +190,15 @@ class Bootstrap extends Application
             $this->loader = new Loader();
         }
 
-        foreach ($this->config->get('app') as $namespace => $path) {
-            $this->loader->registerNamespaces([$namespace => $path], true);
-        }
+        $namespace = $this->config->get('app', null);
 
-        $this->loader->register();
+        if ($namespace !== null) {
+            foreach ($this->config->get('app') as $namespace => $path) {
+                $this->loader->registerNamespaces([$namespace => $path], true);
+            }
+
+            $this->loader->register();
+        }
     }
 
     /**
