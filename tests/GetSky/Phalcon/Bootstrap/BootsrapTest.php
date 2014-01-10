@@ -188,8 +188,8 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'App\Providers' => '../../app/Providers/',
-                'App\Services' => '../../app/Services/'
+                'App\Providers' => './tests/app/Providers/',
+                'App\Services' => './tests/app/Services/'
             ],
             $this->bootstrap->getLoader()->getNamespaces()
         );
@@ -207,6 +207,33 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $method->invoke($object);
 
         $this->assertNull($object->getLoader()->getNamespaces());
+    }
+
+    public function testInitServices()
+    {
+        $ref = new ReflectionClass(self::TEST_CLASS);
+
+        $di = new FactoryDefault();
+        $object = $ref->newInstance($di,'dev');
+        $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initModules');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initServices');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initNamespace');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $this->assertInstanceOf('GetSky\Phalcon\Bootstrap\Bootstrap', $object);
     }
 
     protected function setUp()
