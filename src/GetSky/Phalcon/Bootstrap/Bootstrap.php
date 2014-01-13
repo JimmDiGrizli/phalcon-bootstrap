@@ -26,6 +26,11 @@ class Bootstrap extends Application
     const DEFAULT_ENVIRONMENT = 'dev';
 
     /**
+     * Default application environment
+     */
+    const DEFAULT_CONFIG_NAME = 'options';
+
+    /**
      * The path to the application configuration file
      * @var string|null
      */
@@ -230,8 +235,13 @@ class Bootstrap extends Application
             )
         );
 
+        $configName = $this->config->get(
+            'config-name',
+            $this::DEFAULT_CONFIG_NAME
+        );
+
         $this->getDI()->setShared(
-            $this->config->get('config-name'),
+            $configName,
             $this->options
         );
         $this->getDI()->get('registrant')->registration();
