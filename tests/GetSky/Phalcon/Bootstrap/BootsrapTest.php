@@ -225,15 +225,32 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $method->setAccessible(true);
         $method->invoke($object);
 
-        $method = new ReflectionMethod(self::TEST_CLASS, 'initServices');
-        $method->setAccessible(true);
-        $method->invoke($object);
-
         $method = new ReflectionMethod(self::TEST_CLASS, 'initNamespace');
         $method->setAccessible(true);
         $method->invoke($object);
 
-        $this->assertInstanceOf('GetSky\Phalcon\Bootstrap\Bootstrap', $object);
+        $method = new ReflectionMethod(self::TEST_CLASS, 'initServices');
+        $method->setAccessible(true);
+        $method->invoke($object);
+
+        $registrant = $object->getDi()->get('registrant');
+        $this->assertInstanceOf(
+            'GetSky\Phalcon\AutoloadServices\Registrant',
+            $registrant
+        );
+
+        $options = $object->getDi()->get('options');
+        $this->assertInstanceOf('Phalcon\Config', $options);
+
+        $this->assertSame(
+            'dev',
+            $options->get('prod-status')->get('environment')
+        );
+
+        $this->assertInstanceOf(
+            'Phalcon\Config',
+            $options->get('prod-status')->get('config')
+        );
     }
 
     protected function setUp()
