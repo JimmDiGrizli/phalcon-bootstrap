@@ -7,7 +7,7 @@ use Phalcon\Config;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
-abstract class Module implements ModuleDefinitionInterface
+class Module implements ModuleDefinitionInterface
 {
 
     protected $dir;
