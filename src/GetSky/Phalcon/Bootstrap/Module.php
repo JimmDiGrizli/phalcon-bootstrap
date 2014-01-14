@@ -14,9 +14,9 @@ abstract class Module implements ModuleDefinitionInterface
 
     /**
      * Registers an autoloader related to the module
-     *
+     * @param \Phalcon\DiInterface $dependencyInjector
      */
-    public function registerAutoloaders()
+    public function registerAutoloaders($dependencyInjector)
     {
         if ($this->dir != null) {
             $namespace = substr(
