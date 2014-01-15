@@ -1,6 +1,7 @@
 <?php
 namespace GetSky\Phalcon\Bootstrap;
 
+use ___PHPSTORM_HELPERS\this;
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
 use Phalcon\Config;
@@ -10,7 +11,7 @@ use Phalcon\Mvc\ModuleDefinitionInterface;
 class Module implements ModuleDefinitionInterface
 {
 
-    protected $dir;
+    const DIR = __DIR__;
 
     /**
      * Registers an autoloader related to the module
@@ -18,7 +19,7 @@ class Module implements ModuleDefinitionInterface
      */
     public function registerAutoloaders($dependencyInjector)
     {
-        if ($this->dir != null) {
+        if ($this::DIR != null) {
             $namespace = substr(
                 get_class($this),
                 0,
@@ -27,7 +28,7 @@ class Module implements ModuleDefinitionInterface
 
             $loader = new Loader();
 
-            $loader->registerNamespaces([$namespace => $this->dir . '/']);
+            $loader->registerNamespaces([$namespace => $this::DIR . '/']);
 
             $loader->register();
 
@@ -49,7 +50,7 @@ class Module implements ModuleDefinitionInterface
             new Config(
                 [
                     'module-options' => new Ini(
-                            $this->dir . '/Resources/config/options.ini'
+                            $this::DIR . '/Resources/config/options.ini'
                         )
                 ]
             )
@@ -61,7 +62,7 @@ class Module implements ModuleDefinitionInterface
          */
         $registrant = $dependencyInjector->get('registrant');
         $registrant->setServices(
-            new Ini($this->dir . '/Resources/config/services.ini')
+            new Ini($this::DIR . '/Resources/config/services.ini')
         );
         $registrant->registration();
     }
