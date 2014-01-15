@@ -244,12 +244,12 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(
             'dev',
-            $options->get('prod-status')->get('environment')
+            $options->get('app-status')->get('environment')
         );
 
         $this->assertInstanceOf(
             'Phalcon\Config',
-            $options->get('prod-status')->get('config')
+            $options->get('app-status')->get('config')
         );
     }
 

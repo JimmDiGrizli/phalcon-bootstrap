@@ -227,7 +227,7 @@ class Bootstrap extends Application
         $this->options->merge(
             new Config(
                 [
-                    'prod-status' => [
+                    'app-status' => [
                         'environment' => $this->environment,
                         'config' => $this->config
                     ]
