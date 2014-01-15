@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL);
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 (new \Phalcon\Debug())->listen(true, true);
@@ -7,6 +8,7 @@ use GetSky\Phalcon\Bootstrap\Bootstrap;
 use Phalcon\DI\FactoryDefault;
 
 try {
+
     $app = new Bootstrap(new FactoryDefault());
     echo $app->run();
     echo '<pre>';
@@ -14,7 +16,7 @@ try {
 
     print_r(
         'environment: ' .
-        $di->get('options')->get('prod-status')->get('environment') .
+        $di->get('options')->get('app-status')->get('environment') .
         '<br>'
     );
 
