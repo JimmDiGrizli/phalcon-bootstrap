@@ -1,7 +1,8 @@
 <?php
-namespace GetSky\FrontendModule\Providers;
+namespace GetSkyExample\FrontendModule\Providers;
 
 use GetSky\Phalcon\AutoloadServices\Provider;
+use \GetSkyExample\FrontendModule\Module;
 use Phalcon\Config;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
@@ -31,7 +32,7 @@ class ViewProvider implements Provider
 
         return function () use ($config, $environment) {
             $view = new View();
-            $view->setViewsDir(__DIR__ . '/../Resources/views/');
+            $view->setViewsDir(Module::DIR . '/Resources/views/');
 
             $view->registerEngines(
                 array(

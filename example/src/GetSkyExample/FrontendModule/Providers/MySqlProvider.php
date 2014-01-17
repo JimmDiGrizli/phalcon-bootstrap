@@ -1,5 +1,5 @@
 <?php
-namespace GetSky\FrontendModule\Providers;
+namespace GetSkyExample\FrontendModule\Providers;
 
 use GetSky\Phalcon\AutoloadServices\Provider;
 use PDO;

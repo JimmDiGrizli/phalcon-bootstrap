@@ -1,5 +1,5 @@
 <?php
-namespace GetSky\FrontendModule;
+namespace GetSkyExample\FrontendModule;
 
 use GetSky\Phalcon\Bootstrap\Module as ModuleBootstrap;
 use Phalcon\Loader;

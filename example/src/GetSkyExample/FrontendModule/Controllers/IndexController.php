@@ -1,5 +1,5 @@
 <?php
-namespace GetSky\FrontendModule\Controllers;
+namespace GetSkyExample\FrontendModule\Controllers;
 
 use Phalcon\Mvc\Controller;
 

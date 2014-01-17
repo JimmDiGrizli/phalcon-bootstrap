@@ -1,5 +1,5 @@
 <?php
-namespace GetSky\FrontendModule\Providers;
+namespace GetSkyExample\FrontendModule\Providers;
 
 use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Mvc\Dispatcher;
@@ -13,7 +13,7 @@ class DispatcherProvider implements Provider {
     {
         return function() {
             $dispatcher = new Dispatcher();
-            $dispatcher->setDefaultNamespace('GetSky\FrontendModule\Controllers');
+            $dispatcher->setDefaultNamespace('GetSkyExample\FrontendModule\Controllers');
             return $dispatcher;
         };
     }
