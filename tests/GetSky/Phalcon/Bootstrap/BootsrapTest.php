@@ -1,7 +1,7 @@
 <?php
 namespace GetSky\Phalcon\AutoloadServices\Tests;
 
-use GetSky\BackendModule\Module;
+use GetSkyExample\BackendModule\Module;
 use GetSky\Phalcon\Bootstrap\Bootstrap;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
@@ -150,8 +150,8 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
             [
                 'frontend'=>
                     [
-                        'className'=> 'GetSky\FrontendModule\Module',
-                        'path' => '/src/GetSky/FrontendModule/Module.php'
+                        'className'=> 'GetSkyExample\FrontendModule\Module',
+                        'path' => '/src/GetSkyExample/FrontendModule/Module.php'
                     ]
             ],
             $this->bootstrap->getModules()
@@ -188,7 +188,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'App\Providers' => './tests/app/Providers/',
+                'App\TestProviders' => './tests/app/TestProviders/',
                 'App\Services' => './tests/app/Services/'
             ],
             $this->bootstrap->getLoader()->getNamespaces()

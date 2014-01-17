@@ -1,5 +1,5 @@
 <?php
-namespace App\Providers;
+namespace App\TestProviders;
 
 use GetSky\Phalcon\AutoloadServices\Provider;
 use Phalcon\Session\Adapter\Files;
