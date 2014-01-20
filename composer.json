@@ -14,20 +14,14 @@
         "php": ">=5.4",
         "ext-phalcon": "*",
 
-        "getsky/phalcon-autoload-services": "1.0.*"
+        "getsky/phalcon-autoload-services": "1.1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "http://github.com/JimmDiGrizli/phalcon-autoload-services"
-        }
-    ],
     "extra": {
         "branch-alias": {
-            "dev-develop": "1.0.x-dev"
+            "dev-develop": "1.1.x-dev"
         }
     },
     "minimum-stability": "dev",
