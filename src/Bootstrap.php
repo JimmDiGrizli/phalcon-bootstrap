@@ -2,9 +2,9 @@
 namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
-use Phalcon\Config\Adapter\Ini;
 use Phalcon\Config;
 use Phalcon\DI;
+use Phalcon\Exception;
 use Phalcon\Loader;
 use Phalcon\Mvc\Application;
 
@@ -102,7 +102,7 @@ class Bootstrap extends Application
      */
     protected function boot()
     {
-        $this->config = new Ini($this->getPathConfig());
+        $this->config = $this->extension($this->getPathConfig());
 
         if ($this->environment === null) {
             $this->environment = $this->config->get(
@@ -123,7 +123,7 @@ class Bootstrap extends Application
             foreach ($paths as $path) {
                 $path = str_replace("{environment}", $this->environment, $path);
                 if (is_readable($path)) {
-                    $ini = new Ini ($path);
+                    $ini = $this->extension($path);
                     if (!isset($configs[$x])) {
                         $configs[$x] = $ini;
                     } else {
@@ -245,5 +245,22 @@ class Bootstrap extends Application
             $this->options
         );
         $this->getDI()->get('registrant')->registration();
+    }
+
+    /**
+     * @param $path
+     * @return Config
+     * @throws \Phalcon\Exception
+     */
+    protected function extension($path)
+    {
+        $file = pathinfo($path);
+        if (!isset($file['extension'])) {
+            throw new Exception("Extension not found ($path)");
+        }
+
+        $class = '\Phalcon\Config\Adapter\\' . ucfirst($file['extension']);
+
+        return new $class($path);
     }
 } 
