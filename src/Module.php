@@ -1,10 +1,9 @@
 <?php
 namespace GetSky\Phalcon\Bootstrap;
 
-use ___PHPSTORM_HELPERS\this;
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use Phalcon\Config\Adapter\Ini;
-use Phalcon\Config;
+use Phalcon\Config as BaseConfig;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
@@ -47,7 +46,7 @@ class Module implements ModuleDefinitionInterface
         $options = $dependencyInjector->get('options');
 
         $options->merge(
-            new Config(
+            new BaseConfig(
                 [
                     'module-options' => new Ini(
                             $this::DIR . '/Resources/config/options.ini'

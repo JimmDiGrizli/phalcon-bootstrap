@@ -2,9 +2,8 @@
 namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
-use Phalcon\Config;
+use Phalcon\Config as BaseConfig;
 use Phalcon\DI;
-use Phalcon\Exception;
 use Phalcon\Loader;
 use Phalcon\Mvc\Application;
 
@@ -44,19 +43,19 @@ class Bootstrap extends Application
 
     /**
      * Application configuration
-     * @var Config|null
+     * @var BaseConfig|null
      */
     private $config;
 
     /**
      * The application configuration
-     * @var Config|null
+     * @var BaseConfig|null
      */
     private $options;
 
     /**
      * The configuration of services for the dependency injection
-     * @var Config|null
+     * @var BaseConfig|null
      */
     private $services;
 
@@ -102,7 +101,8 @@ class Bootstrap extends Application
      */
     protected function boot()
     {
-        $this->config = $this->extension($this->getPathConfig());
+        $config = new Config();
+        $this->config = $config->create($this->getPathConfig());
 
         if ($this->environment === null) {
             $this->environment = $this->config->get(
@@ -116,14 +116,15 @@ class Bootstrap extends Application
         }
 
         /**
-         * @var Config[] $configs
+         * @var BaseConfig[] $configs
          */
         $configs = [];
         foreach ($this->config->get('path') as $x => $paths) {
             foreach ($paths as $path) {
                 $path = str_replace("{environment}", $this->environment, $path);
                 if (is_readable($path)) {
-                    $ini = $this->extension($path);
+                    $config = new Config();
+                    $ini = $config->create($path);
                     if (!isset($configs[$x])) {
                         $configs[$x] = $ini;
                     } else {
@@ -143,7 +144,7 @@ class Bootstrap extends Application
     public function getPathConfig()
     {
         if ($this->pathConfig === null) {
-            return $this::DEFAULT_CONFIG;
+            return __DIR__.'\\'.$this::DEFAULT_CONFIG;
         } else {
             return $this->pathConfig;
         }
@@ -225,7 +226,7 @@ class Bootstrap extends Application
         );
 
         $this->options->merge(
-            new Config(
+            new BaseConfig(
                 [
                     'app-status' => [
                         'environment' => $this->environment,
@@ -245,22 +246,5 @@ class Bootstrap extends Application
             $this->options
         );
         $this->getDI()->get('registrant')->registration();
-    }
-
-    /**
-     * @param $path
-     * @return Config
-     * @throws \Phalcon\Exception
-     */
-    protected function extension($path)
-    {
-        $file = pathinfo($path);
-        if (!isset($file['extension'])) {
-            throw new Exception("Extension not found ($path)");
-        }
-
-        $class = '\Phalcon\Config\Adapter\\' . ucfirst($file['extension']);
-
-        return new $class($path);
     }
 } 
