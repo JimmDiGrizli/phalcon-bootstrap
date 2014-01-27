@@ -44,7 +44,11 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
     public function testSetGetPathConfig()
     {
         $default = $this->bootstrap->getPathConfig();
-        $this->assertSame(Bootstrap::DEFAULT_CONFIG, $default);
+
+        $test = '/home/jimmdigrizli/www/phalcon-bootstrap/src/'
+            . Bootstrap::DEFAULT_CONFIG;
+
+        $this->assertSame($test, $default);
 
         $test = "test.ini";
         $this->bootstrap->setPathConfig($test);

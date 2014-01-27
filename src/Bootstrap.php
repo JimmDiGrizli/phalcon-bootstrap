@@ -2,6 +2,7 @@
 namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
+use GetSky\Phalcon\ConfigLoader\ConfigLoader;
 use Phalcon\Config as BaseConfig;
 use Phalcon\DI;
 use Phalcon\Loader;
@@ -72,6 +73,9 @@ class Bootstrap extends Application
     public function __construct(DI $di, $environment = null)
     {
         parent::__construct($di);
+
+        $this->di->setShared('config-loader', new ConfigLoader());
+
         if ($environment !== null) {
             $this->environment = $environment;
         }
@@ -101,8 +105,12 @@ class Bootstrap extends Application
      */
     protected function boot()
     {
-        $config = new Config();
-        $this->config = $config->create($this->getPathConfig());
+        /**
+         * @var $configLoader ConfigLoader
+         */
+
+        $configLoader = $this->di->get('config-loader');
+        $this->config = $configLoader->create($this->getPathConfig());
 
         if ($this->environment === null) {
             $this->environment = $this->config->get(
@@ -123,8 +131,7 @@ class Bootstrap extends Application
             foreach ($paths as $path) {
                 $path = str_replace("{environment}", $this->environment, $path);
                 if (is_readable($path)) {
-                    $config = new Config();
-                    $ini = $config->create($path);
+                    $ini = $configLoader->create($path);
                     if (!isset($configs[$x])) {
                         $configs[$x] = $ini;
                     } else {
@@ -144,7 +151,7 @@ class Bootstrap extends Application
     public function getPathConfig()
     {
         if ($this->pathConfig === null) {
-            return __DIR__.'\\'.$this::DEFAULT_CONFIG;
+            return __DIR__.'/'.$this::DEFAULT_CONFIG;
         } else {
             return $this->pathConfig;
         }
