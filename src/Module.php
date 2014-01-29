@@ -2,8 +2,9 @@
 namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
-use Phalcon\Config\Adapter\Ini;
+use GetSky\Phalcon\ConfigLoader\ConfigLoader;
 use Phalcon\Config as BaseConfig;
+use Phalcon\Config;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
@@ -11,6 +12,8 @@ class Module implements ModuleDefinitionInterface
 {
 
     const DIR = __DIR__;
+    const CONFIG = '/Resources/config/options.ini';
+    const SERVICES = '/Resources/config/services.ini';
 
     /**
      * Registers an autoloader related to the module
@@ -41,15 +44,20 @@ class Module implements ModuleDefinitionInterface
     public function registerServices($dependencyInjector)
     {
         /**
-         * @var Config $options
+         * @var $options Config
          */
         $options = $dependencyInjector->get('options');
+
+        /**
+         * @var $configLoader ConfigLoader
+         */
+        $configLoader = $dependencyInjector->get('config-loader');
 
         $options->merge(
             new BaseConfig(
                 [
-                    'module-options' => new Ini(
-                            $this::DIR . '/Resources/config/options.ini'
+                    'module-options' => $configLoader->create(
+                            $this::DIR . $this::CONFIG
                         )
                 ]
             )
@@ -61,7 +69,7 @@ class Module implements ModuleDefinitionInterface
          */
         $registrant = $dependencyInjector->get('registrant');
         $registrant->setServices(
-            new Ini($this::DIR . '/Resources/config/services.ini')
+            $configLoader->create($this::DIR . $this::SERVICES)
         );
         $registrant->registration();
     }
