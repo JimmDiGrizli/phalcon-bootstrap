@@ -1,7 +1,6 @@
 <?php
 namespace GetSky\Phalcon\AutoloadServices\Tests;
 
-use GetSkyExample\BackendModule\Module;
 use GetSky\Phalcon\Bootstrap\Bootstrap;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
@@ -13,7 +12,6 @@ use ReflectionMethod;
 class BootstrapTest extends PHPUnit_Framework_TestCase
 {
     const TEST_CLASS = 'GetSky\Phalcon\Bootstrap\Bootstrap';
-
     /**
      * @var Bootstrap
      */
@@ -26,7 +24,10 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
     public function testConstOfBootstrap()
     {
-        $this->assertSame('Resources/config/config.ini', Bootstrap::DEFAULT_CONFIG);
+        $this->assertSame(
+            'Resources/config/config.ini',
+            Bootstrap::DEFAULT_CONFIG
+        );
         $this->assertSame('dev', Bootstrap::DEFAULT_ENVIRONMENT);
     }
 
@@ -152,16 +153,16 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'frontend'=>
+                'frontend' =>
                     [
-                        'className'=> 'GetSkyExample\FrontendModule\Module',
+                        'className' => 'GetSkyExample\FrontendModule\Module',
                         'path' => '/src/GetSkyExample/FrontendModule/Module.php'
                     ]
             ],
             $this->bootstrap->getModules()
         );
 
-        $object = $ref->newInstance(new FactoryDefault(),'dev');
+        $object = $ref->newInstance(new FactoryDefault(), 'dev');
         $object->setPathConfig(
             'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
         );
@@ -218,7 +219,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $ref = new ReflectionClass(self::TEST_CLASS);
 
         $di = new FactoryDefault();
-        $object = $ref->newInstance($di,'dev');
+        $object = $ref->newInstance($di, 'dev');
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
 
         $method = new ReflectionMethod(self::TEST_CLASS, 'boot');

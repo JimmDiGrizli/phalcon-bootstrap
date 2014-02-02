@@ -7,7 +7,6 @@ use PHPUnit_Framework_TestCase;
 class ModuleTest extends PHPUnit_Framework_TestCase
 {
     const TEST_CLASS = 'GetSky\Phalcon\Bootstrap\Module';
-
     /**
      * @var Module
      */

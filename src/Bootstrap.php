@@ -19,47 +19,39 @@ class Bootstrap extends Application
      * Default path of the application configuration file
      */
     const DEFAULT_CONFIG = 'Resources/config/config.ini';
-
     /**
      * Default application environment
      */
     const DEFAULT_ENVIRONMENT = 'dev';
-
     /**
      * Default application environment
      */
     const DEFAULT_CONFIG_NAME = 'options';
-
     /**
      * The path to the application configuration file
      * @var string|null
      */
     private $pathConfig;
-
     /**
      * The variable indicates the application environment
      * @var string|null
      */
     private $environment;
-
     /**
      * Application configuration
      * @var BaseConfig|null
      */
     private $config;
-
     /**
      * The application configuration
      * @var BaseConfig|null
      */
     private $options;
-
     /**
      * The configuration of services for the dependency injection
      * @var BaseConfig|null
      */
     private $services;
-
     /**
      * The loader of namespace
      * @var Loader|null
@@ -151,7 +143,7 @@ class Bootstrap extends Application
     public function getPathConfig()
     {
         if ($this->pathConfig === null) {
-            return __DIR__.'/'.$this::DEFAULT_CONFIG;
+            return __DIR__ . '/' . $this::DEFAULT_CONFIG;
         } else {
             return $this->pathConfig;
         }
@@ -215,14 +207,6 @@ class Bootstrap extends Application
     }
 
     /**
-     * @return null|Loader
-     */
-    public function getLoader()
-    {
-        return $this->loader;
-    }
-
-    /**
      * Initializing services in dependency injection
      */
     protected function initServices()
@@ -253,5 +237,13 @@ class Bootstrap extends Application
             $this->options
         );
         $this->getDI()->get('registrant')->registration();
+    }
+
+    /**
+     * @return null|Loader
+     */
+    public function getLoader()
+    {
+        return $this->loader;
     }
 } 
