@@ -1,3 +1,5 @@
+/example/app/environment/*/cache/*/*
+!.gitkeep
 /vendor/
 composer.lock
 phpunit.xml

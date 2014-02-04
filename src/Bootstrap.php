@@ -151,7 +151,7 @@ class Bootstrap extends Application
     public function getPathConfig()
     {
         if ($this->pathConfig === null) {
-            return __DIR__.'/'.$this::DEFAULT_CONFIG;
+            return __DIR__ . '/' . $this::DEFAULT_CONFIG;
         } else {
             return $this->pathConfig;
         }
