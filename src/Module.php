@@ -57,8 +57,8 @@ class Module implements ModuleDefinitionInterface
             new BaseConfig(
                 [
                     'module-options' => $configLoader->create(
-                            $this::DIR . $this::CONFIG
-                        )
+                        $this::DIR . $this::CONFIG
+                    )
                 ]
             )
         );
@@ -73,4 +73,4 @@ class Module implements ModuleDefinitionInterface
         );
         $registrant->registration();
     }
-} 
+}
