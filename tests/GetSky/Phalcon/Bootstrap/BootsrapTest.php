@@ -46,8 +46,12 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
     {
         $default = $this->bootstrap->getPathConfig();
 
-        $test = '/home/jimmdigrizli/www/phalcon-bootstrap/src/'
+        $test = '/phalcon-bootstrap/src/'
             . Bootstrap::DEFAULT_CONFIG;
+
+        $arrayTest = explode('/', $default);
+        $default = '/' . $arrayTest[4] . '/' . $arrayTest[5] . '/' .
+            $arrayTest[6] . '/' . $arrayTest[7] . '/' . $arrayTest[8];
 
         $this->assertSame($test, $default);
 
