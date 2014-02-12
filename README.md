@@ -1,4 +1,4 @@
-Bootstrap component for Phalcon
+Bootstrap component for Phalcon [![Build Status](https://travis-ci.org/JimmDiGrizli/phalcon-bootstrap.png?branch=develop)](https://travis-ci.org/JimmDiGrizli/phalcon-bootstrap)
 ===============================
 
 Bootstrap component for a quick start developing applications on Phalcon.
