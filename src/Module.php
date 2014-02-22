@@ -8,11 +8,27 @@ use Phalcon\Config;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
+/**
+ * Parent class for all custom modules
+ *
+ * Class Module
+ * @package GetSky\Phalcon\Bootstrap
+ */
 class Module implements ModuleDefinitionInterface
 {
 
+    /**
+     * Hack to fix the folder custom module.
+     * In the custom class MUST OVERRIDE this constant.
+     */
     const DIR = __DIR__;
+    /**
+     * Path to the default settings.
+     */
     const CONFIG = '/Resources/config/options.ini';
+    /**
+     * Path to the services by default.
+     */
     const SERVICES = '/Resources/config/services.ini';
 
     /**
