@@ -1,7 +1,8 @@
 <?php
-namespace GetSky\Phalcon\AutoloadServices\Tests;
+namespace GetSky\Phalcon\Bootstrap\Tests;
 
 use GetSky\Phalcon\Bootstrap\Bootstrap;
+use GetSky\Phalcon\ConfigLoader\ConfigLoader;
 use Phalcon\Config;
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Loader;
@@ -22,15 +23,6 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Phalcon\Mvc\Application', $this->bootstrap);
     }
 
-    public function testConstOfBootstrap()
-    {
-        $this->assertSame(
-            'Resources/config/config.ini',
-            Bootstrap::DEFAULT_CONFIG
-        );
-        $this->assertSame('dev', Bootstrap::DEFAULT_ENVIRONMENT);
-    }
-
     public function testChangingEnvironment()
     {
         $ref = new ReflectionClass(self::TEST_CLASS);
@@ -42,60 +34,26 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $this->assertSame('prod', $environment->getValue($object));
     }
 
-    public function testSetGetPathConfig()
-    {
-        $default = $this->bootstrap->getPathConfig();
-
-        $test = substr_count($default, Bootstrap::DEFAULT_CONFIG);
-
-        $this->assertSame($test, 1);
-
-        $test = "test.ini";
-        $this->bootstrap->setPathConfig($test);
-        $this->assertSame($test, $this->bootstrap->getPathConfig());
-    }
-
-    public function testChangingEnvironmentInBootMethod()
+    public function testDefaultEnvironment()
     {
         $ref = new ReflectionClass(self::TEST_CLASS);
-
-        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
-        $method->setAccessible(true);
+        $object = $ref->newInstance(new FactoryDefault());
 
         $environment = $ref->getProperty('environment');
         $environment->setAccessible(true);
 
-        $object = $ref->newInstance(new FactoryDefault());
-        $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
-        $method->invoke($object);
-        $this->assertSame('tests', $environment->getValue($object));
-
-        $object = $ref->newInstance(new FactoryDefault(), 'prod');
-        $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
-        $method->invoke($object);
-        $this->assertSame('prod', $environment->getValue($object));
-
-        $object = $ref->newInstance(new FactoryDefault());
-        $object->setPathConfig(
-            'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
-        );
-        $method->invoke($object);
         $this->assertSame('dev', $environment->getValue($object));
     }
 
-    /**
-     * @expectedException \GetSky\Phalcon\Bootstrap\PathNotFoundException
-     */
-    public function testPathNotFoundException()
+    public function testSetGetPathConfig()
     {
-        $ref = new ReflectionClass(self::TEST_CLASS);
+        $default = $this->bootstrap->getPathConfig();
 
-        $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
-        $method->setAccessible(true);
+        $this->assertSame($default, '../app/config/config_dev.ini');
 
-        $object = $ref->newInstance(new FactoryDefault());
-        $object->setPathConfig('GetSky/Phalcon/Bootstrap/configException.ini');
-        $method->invoke($object);
+        $test = "test.ini";
+        $this->bootstrap->setPathConfig($test);
+        $this->assertSame($test, $this->bootstrap->getPathConfig());
     }
 
     public function testBoot()
@@ -105,12 +63,6 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
         $method->setAccessible(true);
 
-        $services = $ref->getProperty('services');
-        $services->setAccessible(true);
-
-        $options = $ref->getProperty('options');
-        $options->setAccessible(true);
-
         $config = $ref->getProperty('config');
         $config->setAccessible(true);
 
@@ -118,22 +70,19 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
         $method->invoke($object);
 
-        $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/services.ini');
-        $iniProd = new Config\Adapter\Ini(
-            'GetSky/Phalcon/Bootstrap/environment/tests/config/services.ini'
+        /**
+         * @var $configLoader ConfigLoader
+         */
+        $configLoader = $object->getDI()->get('config-loader');
+        $this->assertInstanceOf(
+            'GetSky\Phalcon\ConfigLoader\ConfigLoader',
+            $configLoader
         );
-        $ini->merge($iniProd);
-        $this->assertEquals($ini, $services->getValue($object));
 
-        $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/options.ini');
-        $iniProd = new Config\Adapter\Ini(
-            'GetSky/Phalcon/Bootstrap/environment/tests/config/options.ini'
-        );
-        $ini->merge($iniProd);
-        $this->assertEquals($ini, $options->getValue($object));
-
-        $ini = new Config\Adapter\Ini('GetSky/Phalcon/Bootstrap/config.ini');
+        $ini = $configLoader->create('GetSky/Phalcon/Bootstrap/config.ini');
         $this->assertEquals($ini, $config->getValue($object));
+
+
     }
 
     public function testInitModules()
@@ -155,7 +104,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
                 'frontend' =>
                     [
                         'className' => 'GetSkyExample\FrontendModule\Module',
-                        'path' => '/src/GetSkyExample/FrontendModule/Module.php'
+                        'path' => '../src/GetSkyExample/FrontendModule/Module.php'
                     ]
             ],
             $this->bootstrap->getModules()
@@ -243,17 +192,15 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
             $registrant
         );
 
-        $options = $object->getDi()->get('options');
-        $this->assertInstanceOf('Phalcon\Config', $options);
+        /**
+         * @var $config Config
+         */
+        $config = $object->getDi()->get('config');
+        $this->assertInstanceOf('Phalcon\Config', $config);
 
         $this->assertSame(
             'dev',
-            $options->get('app-status')->get('environment')
-        );
-
-        $this->assertInstanceOf(
-            'Phalcon\Config',
-            $options->get('app-status')->get('config')
+            $config->get('environment')
         );
     }
 

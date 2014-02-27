@@ -25,7 +25,7 @@ class Module implements ModuleDefinitionInterface
     /**
      * Path to the default settings.
      */
-    const CONFIG = '/Resources/config/options.ini';
+    const CONFIG = '/Resources/config/config_dev.ini';
     /**
      * Path to the services by default.
      */
@@ -62,7 +62,7 @@ class Module implements ModuleDefinitionInterface
         /**
          * @var $options Config
          */
-        $options = $dependencyInjector->get('options');
+        $options = $dependencyInjector->get('config');
 
         /**
          * @var $configLoader ConfigLoader
@@ -78,7 +78,7 @@ class Module implements ModuleDefinitionInterface
                 ]
             )
         );
-        $dependencyInjector->setShared('options', $options);
+        $dependencyInjector->setShared('config', $options);
 
         /**
          * @var Registrant $registrant

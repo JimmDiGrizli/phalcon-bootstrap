@@ -16,7 +16,7 @@ try {
 
     print_r(
         'environment: ' .
-        $di->get('options')->get('app-status')->get('environment') .
+        $di->get('config')->get('environment') .
         '<br>'
     );
 

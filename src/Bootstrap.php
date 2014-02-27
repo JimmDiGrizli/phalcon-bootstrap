@@ -3,7 +3,7 @@ namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use GetSky\Phalcon\ConfigLoader\ConfigLoader;
-use Phalcon\Config as BaseConfig;
+use Phalcon\Config;
 use Phalcon\DI;
 use Phalcon\Loader;
 use Phalcon\Mvc\Application;
@@ -16,45 +16,23 @@ class Bootstrap extends Application
 {
 
     /**
-     * Default path of the application configuration file
-     */
-    const DEFAULT_CONFIG = 'Resources/config/config.ini';
-    /**
-     * Default application environment
-     */
-    const DEFAULT_ENVIRONMENT = 'dev';
-    /**
-     * Default application environment
-     */
-    const DEFAULT_CONFIG_NAME = 'options';
-    /**
      * The path to the application configuration file
-     * @var string|null
+     * @var string
      */
-    private $pathConfig;
+    private $pathConfig = '../app/config/config_%environment%.ini';
     /**
      * The variable indicates the application environment
-     * @var string|null
+     * @var string
      */
-    private $environment;
+    private $environment = 'dev';
     /**
      * Application configuration
-     * @var BaseConfig|null
+     * @var Config|null
      */
     private $config;
     /**
-     * The application configuration
-     * @var BaseConfig|null
-     */
-    private $options;
-    /**
-     * The configuration of services for the dependency injection
-     * @var BaseConfig|null
-     */
-    private $services;
-    /**
      * The loader of namespace
-     * @var Loader|null
+     * @var Loader
      */
     private $loader;
 
@@ -65,9 +43,7 @@ class Bootstrap extends Application
     public function __construct(DI $di, $environment = null)
     {
         parent::__construct($di);
-
-        $this->di->setShared('config-loader', new ConfigLoader());
-
+        $this->loader = new Loader();
         if ($environment !== null) {
             $this->environment = $environment;
         }
@@ -93,47 +69,12 @@ class Bootstrap extends Application
 
     /**
      * Loads the settings option and a list of services for the application
-     * @throw PathNotFoundException
      */
     protected function boot()
     {
-        /**
-         * @var $configLoader ConfigLoader
-         */
-
-        $configLoader = $this->di->get('config-loader');
+        $configLoader = new ConfigLoader($this->environment);
+        $this->di->setShared('config-loader', $configLoader);
         $this->config = $configLoader->create($this->getPathConfig());
-
-        if ($this->environment === null) {
-            $this->environment = $this->config->get(
-                'environment',
-                self::DEFAULT_ENVIRONMENT
-            );
-        }
-
-        if (count($this->config->get('path')) === 0) {
-            throw new PathNotFoundException('Not found paths in config file');
-        }
-
-        /**
-         * @var BaseConfig[] $configs
-         */
-        $configs = [];
-        foreach ($this->config->get('path') as $x => $paths) {
-            foreach ($paths as $path) {
-                $path = str_replace("{environment}", $this->environment, $path);
-                if (is_readable($path)) {
-                    $ini = $configLoader->create($path);
-                    if (!isset($configs[$x])) {
-                        $configs[$x] = $ini;
-                    } else {
-                        $configs[$x]->merge($ini);
-                    }
-                }
-            }
-            $this->$x = $configs[$x];
-        }
-
     }
 
     /**
@@ -142,11 +83,11 @@ class Bootstrap extends Application
      */
     public function getPathConfig()
     {
-        if ($this->pathConfig === null) {
-            return __DIR__ . '/' . $this::DEFAULT_CONFIG;
-        } else {
-            return $this->pathConfig;
-        }
+        return str_replace(
+            "%environment%",
+            $this->environment,
+            $this->pathConfig
+        );
     }
 
     /**
@@ -165,17 +106,16 @@ class Bootstrap extends Application
     {
         $modules = null;
 
-        if ($this->options !== null) {
-            $modules = $this->options->get('modules', null);
+        if ($this->config !== null) {
+            $modules = $this->config->get('modules', null);
         }
 
         if ($modules !== null) {
-            $pathFile = $this->config->get('modules')->get('path');
-            $module = $this->config->get('modules')->get('module');
+            $pathFile = $this->config->get('bootstrap')->get('path');
+            $module = $this->config->get('bootstrap')->get('module');
             $arrayModules = [];
 
             foreach ($modules as $name => $namespace) {
-
                 $path = $pathFile . str_replace('\\', '/', $namespace);
                 $arrayModules[$name] = [
                     'className' => $namespace . '\\' . substr($module, 0, -4),
@@ -191,14 +131,10 @@ class Bootstrap extends Application
      */
     protected function initNamespace()
     {
-        if ($this->loader === null) {
-            $this->loader = new Loader();
-        }
+        $namespaces = $this->config->get('namespaces', null);
 
-        $namespace = $this->config->get('app', null);
-
-        if ($namespace !== null) {
-            foreach ($this->config->get('app') as $namespace => $path) {
+        if ($namespaces !== null) {
+            foreach ($namespaces as $namespace => $path) {
                 $this->loader->registerNamespaces([$namespace => $path], true);
             }
 
@@ -211,31 +147,15 @@ class Bootstrap extends Application
      */
     protected function initServices()
     {
+        $dependencies = $this->config->get('dependencies', null);
         $this->getDI()->setShared(
             'registrant',
-            new Registrant($this->services)
+            new Registrant($dependencies)
         );
 
-        $this->options->merge(
-            new BaseConfig(
-                [
-                    'app-status' => [
-                        'environment' => $this->environment,
-                        'config' => $this->config
-                    ]
-                ]
-            )
-        );
+        $this->config->merge(new Config(['environment' => $this->environment]));
+        $this->getDI()->setShared('config', $this->config);
 
-        $configName = $this->config->get(
-            'config-name',
-            $this::DEFAULT_CONFIG_NAME
-        );
-
-        $this->getDI()->setShared(
-            $configName,
-            $this->options
-        );
         $this->getDI()->get('registrant')->registration();
     }
 
