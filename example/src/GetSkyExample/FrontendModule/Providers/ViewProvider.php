@@ -27,7 +27,10 @@ class ViewProvider implements Provider
         /**
          * @var Config $config
          */
-        $config = $this->options->get('module-options')->get('volt');
+        $config = $this->options
+            ->get('module-options')
+            ->get(Module::NAME)
+            ->get('volt');
         $environment = $this->options->get('environment');
 
         return function () use ($config, $environment) {

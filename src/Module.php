@@ -30,6 +30,11 @@ class Module implements ModuleDefinitionInterface
      * Path to the services by default.
      */
     const SERVICES = '/Resources/config/services.ini';
+    /**
+     * Name of module.
+     * In the custom class MUST OVERRIDE this constant.
+     */
+    const NAME = 'Module';
 
     /**
      * Registers an autoloader related to the module
@@ -72,9 +77,11 @@ class Module implements ModuleDefinitionInterface
         $options->merge(
             new BaseConfig(
                 [
-                    'module-options' => $configLoader->create(
-                        $this::DIR . $this::CONFIG
-                    )
+                    'module-options' => [
+                        $this::NAME => $configLoader->create(
+                                $this::DIR . $this::CONFIG
+                            )
+                    ]
                 ]
             )
         );

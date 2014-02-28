@@ -2,6 +2,7 @@
 namespace GetSkyExample\FrontendModule\Providers;
 
 use GetSky\Phalcon\AutoloadServices\Provider;
+use GetSkyExample\FrontendModule\Module;
 use PDO;
 use Phalcon\Config;
 use Phalcon\Db\Adapter\Pdo\Mysql;
@@ -23,7 +24,10 @@ class MySqlProvider implements Provider
      */
     public function getServices()
     {
-        $option = $this->options->get('module-options')->get('mysql');
+        $option = $this->options
+            ->get('module-options')
+            ->get(Module::NAME)
+            ->get('mysql');
 
         return function () use ($option) {
             $mysql = new Mysql([

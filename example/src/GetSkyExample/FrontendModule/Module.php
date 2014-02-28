@@ -9,4 +9,5 @@ class Module extends ModuleBootstrap
     const DIR = __DIR__;
     const CONFIG = '/Resources/config/options.ini';
     const SERVICES = '/Resources/config/services.ini';
+    const NAME = 'FrontendModule';
 }

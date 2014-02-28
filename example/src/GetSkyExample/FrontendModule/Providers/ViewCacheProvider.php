@@ -2,6 +2,7 @@
 namespace GetSkyExample\FrontendModule\Providers;
 
 use GetSky\Phalcon\AutoloadServices\Provider;
+use GetSkyExample\FrontendModule\Module;
 use Phalcon\Cache\Backend\Apc;
 use Phalcon\Cache\Backend\File;
 use Phalcon\Cache\Backend\Memcache;
@@ -29,7 +30,11 @@ class ViewCacheProvider implements Provider
         /**
          * @var Config $config
          */
-        $config = $this->options->get('module-options')->get('volt');
+        $config = $this->options
+            ->get('module-options')
+            ->get(Module::NAME)
+            ->get('cache');
+
         $environment = $this->options->get('environment');
 
         return function () use ($config, $environment) {
