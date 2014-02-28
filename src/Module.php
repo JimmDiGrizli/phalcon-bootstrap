@@ -79,12 +79,13 @@ class Module implements ModuleDefinitionInterface
                 [
                     'module-options' => [
                         $this::NAME => $configLoader->create(
-                                $this::DIR . $this::CONFIG
-                            )
+                            $this::DIR . $this::CONFIG
+                        )
                     ]
                 ]
             )
         );
+
         $dependencyInjector->setShared('config', $options);
 
         /**

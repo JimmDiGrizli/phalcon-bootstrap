@@ -35,19 +35,11 @@ class ViewCacheProvider implements Provider
             ->get(Module::NAME)
             ->get('cache');
 
-        $environment = $this->options->get('environment');
-
-        return function () use ($config, $environment) {
+        return function () use ($config) {
 
             $ultraFastFrontend = new Data(['lifetime' => 3600]);
             $fastFrontend = new Data(['lifetime' => 86400]);
             $slowFrontend = new Data(['lifetime' => 604800]);
-
-            $path = str_replace(
-                '{environment}',
-                $environment,
-                $config->get('path')
-            );
 
             $cache = new Multiple(
                 [
@@ -67,7 +59,7 @@ class ViewCacheProvider implements Provider
                         $slowFrontend,
                         [
                             'prefix' => 'cache',
-                            'cacheDir' => $path
+                            'cacheDir' => $config->get('path')
                         ]
                     )
                 ]
