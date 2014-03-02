@@ -25,7 +25,7 @@ class Module implements ModuleDefinitionInterface
     /**
      * Path to the default settings.
      */
-    const CONFIG = '/Resources/config/config_dev.ini';
+    const CONFIG = '/Resources/config/config.ini';
     /**
      * Path to the services by default.
      */
