@@ -47,13 +47,22 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
     public function testSetGetPathConfig()
     {
-        $default = $this->bootstrap->getPathConfig();
+        $ref = new ReflectionClass(self::TEST_CLASS);
+        $object = $ref->newInstance(new FactoryDefault());
+
+        $pathConfig = $ref->getProperty('pathConfig');
+        $pathConfig->setAccessible(true);
+
+        $default = $object->createPath($pathConfig->getValue($object));
 
         $this->assertSame($default, '../app/config/config_dev.ini');
 
         $test = "test.ini";
-        $this->bootstrap->setPathConfig($test);
-        $this->assertSame($test, $this->bootstrap->getPathConfig());
+        $object->setPathConfig($test);
+        $this->assertSame(
+            $test,
+            $object->createPath($pathConfig->getValue($object))
+        );
     }
 
     public function testBoot()
@@ -67,6 +76,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $config->setAccessible(true);
 
         $object = $ref->newInstance(new FactoryDefault());
+        $object->setCacheable(false);
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
         $method->invoke($object);
 
@@ -80,9 +90,8 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         );
 
         $ini = $configLoader->create('GetSky/Phalcon/Bootstrap/config.ini');
+        $ini->merge(new Config(['environment' => 'dev']));
         $this->assertEquals($ini, $config->getValue($object));
-
-
     }
 
     public function testInitModules()
@@ -111,6 +120,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         );
 
         $object = $ref->newInstance(new FactoryDefault(), 'dev');
+        $object->setCacheable(false);
         $object->setPathConfig(
             'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
         );
@@ -148,6 +158,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         );
 
         $object = $ref->newInstance(new FactoryDefault(), 'dev');
+        $object->setCacheable(false);
         $object->setPathConfig(
             'GetSky/Phalcon/Bootstrap/configNoEnvAndModules.ini'
         );
@@ -168,6 +179,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $di = new FactoryDefault();
         $object = $ref->newInstance($di, 'dev');
+        $object->setCacheable(false);
         $object->setPathConfig('GetSky/Phalcon/Bootstrap/config.ini');
 
         $method = new ReflectionMethod(self::TEST_CLASS, 'boot');
@@ -207,6 +219,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->bootstrap = new Bootstrap(new FactoryDefault());
+        $this->bootstrap->setCacheable(false);
     }
 
     protected function tearDown()

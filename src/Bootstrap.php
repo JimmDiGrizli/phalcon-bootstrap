@@ -35,6 +35,11 @@ class Bootstrap extends Application
      * @var Loader
      */
     private $loader;
+    /**
+     * Use or not use the cache for application settings and configuration of services
+     * @var bool
+     */
+    private $cacheable = false;
 
     /**
      * @param DI $di
@@ -46,6 +51,9 @@ class Bootstrap extends Application
         $this->loader = new Loader();
         if ($environment !== null) {
             $this->environment = $environment;
+        }
+        if (extension_loaded('apc') || extension_loaded('apcu')) {
+            $this->cacheable = true;
         }
     }
 
@@ -74,20 +82,45 @@ class Bootstrap extends Application
     {
         $configLoader = new ConfigLoader($this->environment);
         $this->di->setShared('config-loader', $configLoader);
-        $this->config = $configLoader->create($this->getPathConfig());
+
+        $cache = null;
+        if ($this->cacheable === true) {
+            $cache = apc_fetch('config' . $this->environment);
+        }
+
+        if ($cache === false || $cache === null) {
+            $this->config = $configLoader->create(
+                $this->createPath($this->pathConfig)
+            );
+
+            $this->config->merge(
+                new Config(['environment' => $this->environment])
+            );
+            if ($cache === false) {
+                apc_add('config' . $this->environment, $this->config);
+            }
+        } else {
+            $this->config = $cache;
+        }
     }
 
+
     /**
-     * The method gives way to a configuration application
-     * @return string
+     * The method create path
+     *
+     * @param $path
+     * @param string|null $file
+     * @return mixed
      */
-    public function getPathConfig()
+    public function createPath($path, $file = null)
     {
-        return str_replace(
-            "%environment%",
-            $this->environment,
-            $this->pathConfig
-        );
+        $string = str_replace("%environment%", $this->environment, $path);
+
+        if ($file !== null) {
+            $string = str_replace("%file%", $file, $string);
+        }
+
+        return $string;
     }
 
     /**
@@ -98,6 +131,23 @@ class Bootstrap extends Application
     {
         $this->pathConfig = $pathConfig;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isCacheable()
+    {
+        return $this->cacheable;
+    }
+
+    /**
+     * @param boolean $cacheable
+     */
+    public function setCacheable($cacheable)
+    {
+        $this->cacheable = $cacheable;
+    }
+
 
     /**
      * Initializing modules
@@ -152,10 +202,7 @@ class Bootstrap extends Application
             'registrant',
             new Registrant($dependencies)
         );
-
-        $this->config->merge(new Config(['environment' => $this->environment]));
         $this->getDI()->setShared('config', $this->config);
-
         $this->getDI()->get('registrant')->registration();
     }
 
