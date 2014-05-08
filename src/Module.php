@@ -43,18 +43,16 @@ class Module implements ModuleDefinitionInterface
     public function registerAutoloaders($dependencyInjector)
     {
         if ($this::DIR != null) {
+
             $namespace = substr(
                 get_class($this),
                 0,
                 strripos(get_class($this), '\\')
             );
 
-            $loader = new Loader();
-
+            $loader = $dependencyInjector->get('loader');
             $loader->registerNamespaces([$namespace => $this::DIR . '/']);
-
             $loader->register();
-
         }
     }
 
@@ -66,35 +64,42 @@ class Module implements ModuleDefinitionInterface
     {
         /**
          * @var $options Config
+         * @var $settings Config
          */
         $options = $dependencyInjector->get('config');
+        $settings = $options->get('modules')->get($this::NAME);
 
-        /**
-         * @var $configLoader ConfigLoader
-         */
-        $configLoader = $dependencyInjector->get('config-loader');
+        if ($settings->get('config') == false) {
 
-        $options->merge(
-            new BaseConfig(
-                [
-                    'module-options' => [
-                        $this::NAME => $configLoader->create(
-                            $this::DIR . $this::CONFIG
-                        )
+            /**
+             * @var $configLoader ConfigLoader
+             */
+            $configLoader = $dependencyInjector->get('config-loader');
+
+            $options->merge(
+                new BaseConfig(
+                    [
+                        'module-options' => [
+                            $this::NAME => $configLoader->create(
+                                $this::DIR . $this::CONFIG
+                            )
+                        ]
                     ]
-                ]
-            )
-        );
+                )
+            );
 
-        $dependencyInjector->setShared('config', $options);
+            $dependencyInjector->setShared('config', $options);
+        }
 
-        /**
-         * @var Registrant $registrant
-         */
-        $registrant = $dependencyInjector->get('registrant');
-        $registrant->setServices(
-            $configLoader->create($this::DIR . $this::SERVICES)
-        );
-        $registrant->registration();
+        if ($settings->get('services') == false) {
+            /**
+             * @var Registrant $registrant
+             */
+            $registrant = $dependencyInjector->get('registrant');
+            $registrant->setServices(
+                $configLoader->create($this::DIR . $this::SERVICES)
+            );
+            $registrant->registration();
+        }
     }
 }

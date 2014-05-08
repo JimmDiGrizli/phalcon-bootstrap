@@ -162,16 +162,29 @@ class Bootstrap extends Application
 
         if ($modules !== null) {
             $pathFile = $this->config->get('bootstrap')->get('path');
-            $module = $this->config->get('bootstrap')->get('module');
+            $moduleName = $this->config->get('bootstrap')->get('module');
             $arrayModules = [];
 
-            foreach ($modules as $name => $namespace) {
-                $path = $pathFile . str_replace('\\', '/', $namespace);
-                $arrayModules[$name] = [
-                    'className' => $namespace . '\\' . substr($module, 0, -4),
-                    'path' => $path . '/' . $module
-                ];
+            foreach ($modules as $name => $module) {
+
+                $path = '';
+                $namespace = '';
+
+                foreach ($module as $key => $value) {
+                    if ($key == 'namespace') {
+                        $path = $pathFile . str_replace('\\', '/', $value);
+                        $namespace = $value;
+                    }
+                }
+
+                if (isset($path)) {
+                    $arrayModules[$name] = [
+                        'className' => $namespace . '\\' . substr($moduleName, 0, -4),
+                        'path' => $path . '/' . $moduleName
+                    ];
+                }
             }
+
             $this->registerModules($arrayModules);
         }
     }
@@ -189,6 +202,8 @@ class Bootstrap extends Application
             }
 
             $this->loader->register();
+
+            $this->di->set('loader', $this->loader);
         }
     }
 
