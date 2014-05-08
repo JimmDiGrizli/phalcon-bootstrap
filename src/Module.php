@@ -68,13 +68,12 @@ class Module implements ModuleDefinitionInterface
          */
         $options = $dependencyInjector->get('config');
         $settings = $options->get('modules')->get($this::NAME);
+        /**
+         * @var $configLoader ConfigLoader
+         */
+        $configLoader = $dependencyInjector->get('config-loader');
 
         if ($settings->get('config') == false) {
-
-            /**
-             * @var $configLoader ConfigLoader
-             */
-            $configLoader = $dependencyInjector->get('config-loader');
 
             $options->merge(
                 new BaseConfig(
