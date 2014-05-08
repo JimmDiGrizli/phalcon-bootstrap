@@ -167,7 +167,7 @@ class Bootstrap extends Application
 
             foreach ($modules as $name => $module) {
 
-                $path = '';
+                $path = null;
                 $namespace = '';
 
                 foreach ($module as $key => $value) {
@@ -177,7 +177,7 @@ class Bootstrap extends Application
                     }
                 }
 
-                if (isset($path)) {
+                if (!empty($path)) {
                     $arrayModules[$name] = [
                         'className' => $namespace . '\\' . substr($moduleName, 0, -4),
                         'path' => $path . '/' . $moduleName
