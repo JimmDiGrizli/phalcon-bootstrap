@@ -1,6 +1,8 @@
 Bootstrap component for Phalcon [![Build Status](https://travis-ci.org/JimmDiGrizli/phalcon-bootstrap.png?branch=develop)](https://travis-ci.org/JimmDiGrizli/phalcon-bootstrap)
 ===============================
 
+This component is used as a basis for [Pherlin](https://travis-ci.org/JimmDiGrizli/pherlin). I recommend to use it instead of this bootstrap.
+
 Bootstrap component for a quick start developing applications on Phalcon.
 
 The main features of the component:
@@ -12,7 +14,7 @@ The main features of the component:
 Requirements:
 * PHP 5.4
 * Phalcon Framework
-* getsky/phalcon-autoload-di (https://github.com/JimmDiGrizli/phalcon-autoload-di)
-* getsky/phalcon-config-loader (https://github.com/JimmDiGrizli/phalcon-config-loader)
+* [AutoloadServices](https://github.com/JimmDiGrizli/phalcon-autoload-services)
+* [ConfigLoader](https://github.com/JimmDiGrizli/phalcon-config-loader)
 
 Phalcon framework: http://phalconphp.com/
