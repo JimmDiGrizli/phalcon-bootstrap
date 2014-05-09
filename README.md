@@ -13,5 +13,6 @@ Requirements:
 * PHP 5.4
 * Phalcon Framework
 * getsky/phalcon-autoload-di (https://github.com/JimmDiGrizli/phalcon-autoload-di)
+* getsky/phalcon-config-loader (https://github.com/JimmDiGrizli/phalcon-config-loader)
 
 Phalcon framework: http://phalconphp.com/
