@@ -170,7 +170,7 @@ class Bootstrap extends Application
              */
             foreach ($modules as $name => $module) {
                 $namespace = $module->get('namespace');
-                $path = $pathFile . str_replace( '\\', '/', $namespace);
+                $path = $pathFile . str_replace('\\', '/', $namespace);
                 $arrayModules[$name] = [
                     'className' => $namespace . '\\' . substr($moduleName, 0, -4),
                     'path' => $path . '/' . $moduleName
