@@ -25,8 +25,9 @@ class MySqlProvider implements Provider
     public function getServices()
     {
         $option = $this->options
-            ->get('module-options')
+            ->get('modules')
             ->get(Module::NAME)
+            ->get('config')
             ->get('mysql');
 
         return function () use ($option) {

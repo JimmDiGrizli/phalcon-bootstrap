@@ -31,8 +31,9 @@ class ViewCacheProvider implements Provider
          * @var Config $config
          */
         $config = $this->options
-            ->get('module-options')
+            ->get('modules')
             ->get(Module::NAME)
+            ->get('config')
             ->get('cache');
 
         return function () use ($config) {

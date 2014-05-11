@@ -65,8 +65,8 @@ class Bootstrap extends Application
     public function run($hide = false)
     {
         $this->boot();
-        $this->initModules();
         $this->initNamespace();
+        $this->initModules();
         $this->initServices();
         if ($hide === false) {
             return $this->handle()->getContent();
@@ -165,24 +165,16 @@ class Bootstrap extends Application
             $moduleName = $this->config->get('bootstrap')->get('module');
             $arrayModules = [];
 
+            /**
+             * @var $module Config
+             */
             foreach ($modules as $name => $module) {
-
-                $path = null;
-                $namespace = '';
-
-                foreach ($module as $key => $value) {
-                    if ($key == 'namespace') {
-                        $path = $pathFile . str_replace('\\', '/', $value);
-                        $namespace = $value;
-                    }
-                }
-
-                if (!empty($path)) {
-                    $arrayModules[$name] = [
-                        'className' => $namespace . '\\' . substr($moduleName, 0, -4),
-                        'path' => $path . '/' . $moduleName
-                    ];
-                }
+                $namespace = $module->get('namespace');
+                $path = $pathFile . str_replace( '\\', '/', $namespace);
+                $arrayModules[$name] = [
+                    'className' => $namespace . '\\' . substr($moduleName, 0, -4),
+                    'path' => $path . '/' . $moduleName
+                ];
             }
 
             $this->registerModules($arrayModules);
@@ -200,9 +192,7 @@ class Bootstrap extends Application
             foreach ($namespaces as $namespace => $path) {
                 $this->loader->registerNamespaces([$namespace => $path], true);
             }
-
             $this->loader->register();
-
             $this->di->set('loader', $this->loader);
         }
     }
