@@ -3,8 +3,8 @@ namespace GetSky\Phalcon\Bootstrap;
 
 use GetSky\Phalcon\AutoloadServices\Registrant;
 use GetSky\Phalcon\ConfigLoader\ConfigLoader;
-use Phalcon\Config as BaseConfig;
 use Phalcon\Config;
+use Phalcon\Config as BaseConfig;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 
@@ -43,13 +43,7 @@ class Module implements ModuleDefinitionInterface
     public function registerAutoloaders($dependencyInjector)
     {
         if ($this::DIR != null) {
-
-            $namespace = substr(
-                get_class($this),
-                0,
-                strripos(get_class($this), '\\')
-            );
-
+            $namespace = substr(get_class($this), 0, strripos(get_class($this), '\\'));
             $loader = $dependencyInjector->get('loader');
             $loader->registerNamespaces([$namespace => $this::DIR . '/']);
             $loader->register();
@@ -73,24 +67,14 @@ class Module implements ModuleDefinitionInterface
          */
         $configLoader = $dependencyInjector->get('config-loader');
 
-        if ($settings->get('config') == false) {
-
-            $options->merge(
-                new BaseConfig(
-                    [
-                        'module-options' => [
-                            $this::NAME => $configLoader->create(
-                                $this::DIR . $this::CONFIG
-                            )
-                        ]
-                    ]
-                )
+        if ($settings->get('config', false) == false) {
+            $settings->offsetSet(
+                'config',
+                $configLoader->create($this::DIR . $this::CONFIG)
             );
-
-            $dependencyInjector->setShared('config', $options);
         }
 
-        if ($settings->get('services') == false) {
+        if ($settings->get('global_services') == false) {
             /**
              * @var Registrant $registrant
              */

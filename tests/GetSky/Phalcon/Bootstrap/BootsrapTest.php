@@ -110,7 +110,7 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'frontend' =>
+                'FrontendModule' =>
                     [
                         'className' => 'GetSkyExample\FrontendModule\Module',
                         'path' => '../src/GetSkyExample/FrontendModule/Module.php'
