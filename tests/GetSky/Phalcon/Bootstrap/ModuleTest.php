@@ -64,7 +64,7 @@ class ModuleTest extends PHPUnit_Framework_TestCase
         $this->module = new \GetSkyExample\FrontendModule\Module();
         $this->factory = new FactoryDefault();
         $configLoader = new ConfigLoader();
-        $config = $configLoader->create('/tests/GetSky/Phalcon/bootstrap/config.ini');
+        $config = $configLoader->create('GetSky/Phalcon/Bootstrap/config.ini');
         $registrant = new Registrant($config->get('dependencies'));
         $loader = new Loader();
 
