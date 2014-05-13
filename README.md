@@ -21,14 +21,14 @@ echo $app->run(true);
 ```
 
 Configuration file
------------
+------------------
 
 By default, the configuration file is here ```../app/config/config_%environment%.ini```. 
 ```%environment%``` - environment under which the application is running.
 
 To change the configuration file, you must use the method ```setPathConfig()```:
 
-```
+```php
 $app = new Bootstrap(new FactoryDefault());
 $app->setPathConfig('config/config.%environment%.yml');
 echo $app->run();
@@ -52,11 +52,25 @@ of class ```Bootstrap```, there is check the presence of ```apc``` or ```apcu```
 If ```APC(u)``` is found, the configuration will be cached. To disable caching, you 
 should report it:
 
-```
+```php
 $app = new Bootstrap(new FactoryDefault(), 'prod');
 $app->setCacheable(false);
 
 // check
 echo $app->isCacheable();
 // print: false
+```
+
+Loader
+------
+
+If you need the autoloader (```Phalcon\Loader```), you can request it from the bootstrap:
+
+```php
+$app = new Bootstrap(new FactoryDefault(), 'prod');
+
+/**
+* @var $loader Phalcon\Loader
+*/
+$loader = $app->getLoader();
 ```
