@@ -11,6 +11,8 @@ set_include_path(ROOT_PATH . PATH_SEPARATOR . get_include_path());
 
 // required for phalcon/incubator
 include __DIR__ . "/../vendor/autoload.php";
+include __DIR__ . "/../example/src/GetSkyExample/FrontendModule/Module.php";
+
 
 // use the application autoloader to autoload the classes
 // autoload the dependencies found in composer

@@ -67,7 +67,7 @@ class Module implements ModuleDefinitionInterface
          */
         $configLoader = $dependencyInjector->get('config-loader');
 
-        if ($settings->get('config') == false) {
+        if ($settings->get('config', false) == false) {
             $settings->offsetSet(
                 'config',
                 $configLoader->create($this::DIR . $this::CONFIG)
