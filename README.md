@@ -1,20 +1,62 @@
 Bootstrap component for Phalcon [![Build Status](https://travis-ci.org/JimmDiGrizli/phalcon-bootstrap.png?branch=develop)](https://travis-ci.org/JimmDiGrizli/phalcon-bootstrap)
 ===============================
 
-This component is used as a basis for [Pherlin](https://travis-ci.org/JimmDiGrizli/pherlin). I recommend to use it instead of this bootstrap.
+**This component is used as a basis for [Pherlin](https://travis-ci.org/JimmDiGrizli/pherlin). I recommend to use it instead of this bootstrap.**
 
-Bootstrap component for a quick start developing applications on Phalcon.
+Run application
+---------------
 
-The main features of the component:
-- Ability to create multiple environments with various services;
-- Services can be initialized with a string, object or service provider;
-- Services are connected via a configuration file;
-- Services can be registered as "shared" services;
+To launch the application, you need to execute code:
 
-Requirements:
-* PHP 5.4
-* Phalcon Framework
-* [AutoloadServices](https://github.com/JimmDiGrizli/phalcon-autoload-services)
-* [ConfigLoader](https://github.com/JimmDiGrizli/phalcon-config-loader)
+```php
+$app = new Bootstrap(new FactoryDefault());
+echo $app->run();
+```
 
-Phalcon framework: http://phalconphp.com/
+Pass ```true``` into a method ```app()```, if you do not want to run the handler:
+
+```php
+$app = new Bootstrap(new FactoryDefault());
+echo $app->run(true);
+```
+
+Configuration file
+-----------
+
+By default, the configuration file is here ```../app/config/config_%environment%.ini```. 
+```%environment%``` - environment under which the application is running.
+
+To change the configuration file, you must use the method ```setPathConfig()```:
+
+```
+$app = new Bootstrap(new FactoryDefault());
+$app->setPathConfig('config/config.%environment%.yml');
+echo $app->run();
+```
+
+Environment
+-----------
+
+By default, the environment is set to `` `dev ```. To change it, pass the second 
+parameter name of the desired environment.
+
+```php
+$app = new Bootstrap(new FactoryDefault(), 'prod');
+```
+
+Сaching 
+-------
+
+Bootstrap allows you to cache the application configuration. When creating object 
+of class ```Bootstrap```, there is check the presence of ```apc``` or ```apcu```.
+If ```APC(u)``` is found, the configuration will be cached. To disable caching, you 
+should report it:
+
+```
+$app = new Bootstrap(new FactoryDefault(), 'prod');
+$app->setCacheable(false);
+
+// check
+echo $app->isCacheable();
+// print: false
+```
