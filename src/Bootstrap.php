@@ -89,9 +89,7 @@ class Bootstrap extends Application
         }
 
         if ($cache === false || $cache === null) {
-            $this->config = $configLoader->create(
-                $this->createPath($this->pathConfig)
-            );
+            $this->config = $configLoader->create($this->pathConfig);
 
             $this->config->merge(
                 new Config(['environment' => $this->environment])
@@ -104,25 +102,6 @@ class Bootstrap extends Application
         }
     }
 
-
-    /**
-     * The method create path
-     *
-     * @param $path
-     * @param string|null $file
-     * @return mixed
-     */
-    public function createPath($path, $file = null)
-    {
-        $string = str_replace("%environment%", $this->environment, $path);
-
-        if ($file !== null) {
-            $string = str_replace("%file%", $file, $string);
-        }
-
-        return $string;
-    }
-
     /**
      * The method sets a new path configuration file
      * @param string $pathConfig
@@ -130,6 +109,15 @@ class Bootstrap extends Application
     public function setPathConfig($pathConfig)
     {
         $this->pathConfig = $pathConfig;
+    }
+
+    /**
+     * The method get a path configuration file
+     * @return string
+     */
+    public function getPathConfig()
+    {
+        return $this->pathConfig;
     }
 
     /**
@@ -203,10 +191,7 @@ class Bootstrap extends Application
     protected function initServices()
     {
         $dependencies = $this->config->get('dependencies', null);
-        $this->getDI()->setShared(
-            'registrant',
-            new Registrant($dependencies)
-        );
+        $this->getDI()->setShared('registrant', new Registrant($dependencies));
         $this->getDI()->setShared('config', $this->config);
         $this->getDI()->get('registrant')->registration();
     }
