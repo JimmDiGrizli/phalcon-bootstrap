@@ -7,7 +7,4 @@ use Exception;
  * Class PathNotFoundException
  * @package GetSky\Phalcon\Bootstrap
  */
-class PathNotFoundException extends Exception
-{
-
-}
+class PathNotFoundException extends Exception {}

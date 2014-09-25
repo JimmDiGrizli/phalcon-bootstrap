@@ -16,6 +16,12 @@ class Bootstrap extends Application
 {
 
     /**
+     * Name for apc cache
+     * @var string
+     */
+    const CONFIG = 'pherlin_config';
+
+    /**
      * The path to the application configuration file
      * @var string
      */
@@ -85,7 +91,7 @@ class Bootstrap extends Application
 
         $cache = null;
         if ($this->cacheable === true) {
-            $cache = apc_fetch('config' . $this->environment);
+            $cache = apc_fetch(Bootstrap::CONFIG . $this->environment);
         }
 
         if ($cache === false || $cache === null) {
@@ -95,7 +101,7 @@ class Bootstrap extends Application
                 new Config(['environment' => $this->environment])
             );
             if ($cache === false) {
-                apc_add('config' . $this->environment, $this->config);
+                apc_add(Bootstrap::CONFIG . $this->environment, $this->config);
             }
         } else {
             $this->config = $cache;
