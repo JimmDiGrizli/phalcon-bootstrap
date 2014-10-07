@@ -11,15 +11,12 @@ use Phalcon\DI\FactoryDefault;
 try {
 
     $app = new Bootstrap(new FactoryDefault());
+    $app->setCacheable(false);
     echo $app->run();
     echo '<pre>';
     $di = $app->getDI();
 
-    print_r(
-        'environment: ' .
-        $di->get('config')->get('environment') .
-        '<br>'
-    );
+    print_r('environment: ' . $di->get('config')->get('environment') . '<br>');
 
     var_dump($di->getService('router'));
     echo '<br>';

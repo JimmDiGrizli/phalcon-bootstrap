@@ -53,15 +53,11 @@ class BootstrapTest extends PHPUnit_Framework_TestCase
         $pathConfig = $ref->getProperty('pathConfig');
         $pathConfig->setAccessible(true);
 
-        $default = $object->createPath($pathConfig->getValue($object));
-
-        $this->assertSame($default, '../app/config/config_dev.ini');
-
         $test = "test.ini";
         $object->setPathConfig($test);
         $this->assertSame(
             $test,
-            $object->createPath($pathConfig->getValue($object))
+            $object->getPathConfig()
         );
     }
 

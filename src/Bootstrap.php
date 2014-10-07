@@ -16,10 +16,16 @@ class Bootstrap extends Application
 {
 
     /**
+     * Name for apc cache
+     * @var string
+     */
+    const CONFIG = 'pherlin_config';
+
+    /**
      * The path to the application configuration file
      * @var string
      */
-    private $pathConfig = '../app/config/config_%environment%.ini';
+    private $pathConfig = '../app/config/config_%environment%.yml';
     /**
      * The variable indicates the application environment
      * @var string
@@ -85,42 +91,21 @@ class Bootstrap extends Application
 
         $cache = null;
         if ($this->cacheable === true) {
-            $cache = apc_fetch('config' . $this->environment);
+            $cache = apc_fetch(Bootstrap::CONFIG . $this->environment);
         }
 
         if ($cache === false || $cache === null) {
-            $this->config = $configLoader->create(
-                $this->createPath($this->pathConfig)
-            );
+            $this->config = $configLoader->create($this->pathConfig);
 
             $this->config->merge(
                 new Config(['environment' => $this->environment])
             );
             if ($cache === false) {
-                apc_add('config' . $this->environment, $this->config);
+                apc_add(Bootstrap::CONFIG . $this->environment, $this->config);
             }
         } else {
             $this->config = $cache;
         }
-    }
-
-
-    /**
-     * The method create path
-     *
-     * @param $path
-     * @param string|null $file
-     * @return mixed
-     */
-    public function createPath($path, $file = null)
-    {
-        $string = str_replace("%environment%", $this->environment, $path);
-
-        if ($file !== null) {
-            $string = str_replace("%file%", $file, $string);
-        }
-
-        return $string;
     }
 
     /**
@@ -130,6 +115,15 @@ class Bootstrap extends Application
     public function setPathConfig($pathConfig)
     {
         $this->pathConfig = $pathConfig;
+    }
+
+    /**
+     * The method get a path configuration file
+     * @return string
+     */
+    public function getPathConfig()
+    {
+        return $this->pathConfig;
     }
 
     /**
@@ -203,10 +197,7 @@ class Bootstrap extends Application
     protected function initServices()
     {
         $dependencies = $this->config->get('dependencies', null);
-        $this->getDI()->setShared(
-            'registrant',
-            new Registrant($dependencies)
-        );
+        $this->getDI()->setShared('registrant', new Registrant($dependencies));
         $this->getDI()->setShared('config', $this->config);
         $this->getDI()->get('registrant')->registration();
     }
