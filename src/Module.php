@@ -25,11 +25,11 @@ class Module implements ModuleDefinitionInterface
     /**
      * Path to the default settings.
      */
-    const CONFIG = '/Resources/config/config.ini';
+    const CONFIG = '/Resources/config/config.yml';
     /**
      * Path to the services by default.
      */
-    const SERVICES = '/Resources/config/services.ini';
+    const SERVICES = '/Resources/config/services.yml';
     /**
      * Name of module.
      * In the custom class MUST OVERRIDE this constant.

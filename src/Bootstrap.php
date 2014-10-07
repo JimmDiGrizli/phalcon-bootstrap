@@ -25,7 +25,7 @@ class Bootstrap extends Application
      * The path to the application configuration file
      * @var string
      */
-    private $pathConfig = '../app/config/config_%environment%.ini';
+    private $pathConfig = '../app/config/config_%environment%.yml';
     /**
      * The variable indicates the application environment
      * @var string
