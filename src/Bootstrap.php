@@ -19,7 +19,7 @@ class Bootstrap extends Application
      * Name for apc cache
      * @var string
      */
-    const CONFIG = 'pherlin_config';
+    const CONFIG = 'bootstrap';
 
     /**
      * The path to the application configuration file
@@ -31,6 +31,11 @@ class Bootstrap extends Application
      * @var string
      */
     private $environment = 'dev';
+    /**
+     * The variable indicates the application name
+     * @var string
+     */
+    private $name = 'pherlin';
     /**
      * Application configuration
      * @var Config|null
@@ -50,13 +55,17 @@ class Bootstrap extends Application
     /**
      * @param DI $di
      * @param null|string $environment
+     * @param string $name application name
      */
-    public function __construct(DI $di, $environment = null)
+    public function __construct(DI $di, $environment = null, $name = null)
     {
         parent::__construct($di);
         $this->loader = new Loader();
         if ($environment !== null) {
             $this->environment = $environment;
+        }
+        if ($name !== null) {
+            $this->name = $name;
         }
         if (extension_loaded('apc') || extension_loaded('apcu')) {
             $this->cacheable = true;
@@ -88,10 +97,10 @@ class Bootstrap extends Application
     {
         $configLoader = new ConfigLoader($this->environment);
         $this->di->setShared('config-loader', $configLoader);
-
+        $id = Bootstrap::CONFIG . '_' . $this->name . '_' . $this->environment;
         $cache = null;
         if ($this->cacheable === true) {
-            $cache = apc_fetch(Bootstrap::CONFIG . $this->environment);
+            $cache = apc_fetch($id);
         }
 
         if ($cache === false || $cache === null) {
@@ -101,7 +110,7 @@ class Bootstrap extends Application
                 new Config(['environment' => $this->environment])
             );
             if ($cache === false) {
-                apc_add(Bootstrap::CONFIG . $this->environment, $this->config);
+                apc_add($id, $this->config);
             }
         } else {
             $this->config = $cache;
