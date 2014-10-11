@@ -23,15 +23,24 @@ echo $app->run(true);
 Configuration file
 ------------------
 
-By default, the configuration file is here ```../app/config/config_%environment%.ini```. 
+By default, the configuration file is here ```../app/config/config_%environment%.yml```. 
 ```%environment%``` - environment under which the application is running.
 
 To change the configuration file, you must use the method ```setPathConfig()```:
 
 ```php
 $app = new Bootstrap(new FactoryDefault());
-$app->setPathConfig('config/config.%environment%.yml');
+$app->setPathConfig('config/config.%environment%.ini');
 echo $app->run();
+```
+
+If you are on the same machine run two copies of the site, you need to specify a 
+different name for the application cache:
+
+```php
+$app = new Bootstrap(new FactorDefault(), 'prod', 'FestApp');
+// in another application:
+$app = new Bootstrap(new FactorDefault(), 'prod', 'SecondApp');
 ```
 
 Environment
