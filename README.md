@@ -34,15 +34,6 @@ $app->setPathConfig('config/config.%environment%.ini');
 echo $app->run();
 ```
 
-If you are on the same machine run two copies of the site, you need to specify a 
-different name for the application cache:
-
-```php
-$app = new Bootstrap(new FactorDefault(), 'prod', 'FestApp');
-// in another application:
-$app = new Bootstrap(new FactorDefault(), 'prod', 'SecondApp');
-```
-
 Environment
 -----------
 
@@ -68,6 +59,15 @@ $app->setCacheable(false);
 // check
 echo $app->isCacheable();
 // print: false
+```
+
+If you are on the same machine run two copies of the site, you need to specify a 
+different name for the application cache:
+
+```php
+$app = new Bootstrap(new FactorDefault(), 'prod', 'FestApp');
+// in another application:
+$app = new Bootstrap(new FactorDefault(), 'prod', 'SecondApp');
 ```
 
 Loader
