@@ -35,6 +35,18 @@ class Module implements ModuleDefinitionInterface
      * In the custom class MUST OVERRIDE this constant.
      */
     const NAME = 'Module';
+    /**
+     * Use or not use the cache for module settings and configuration of services
+     * @var bool
+     */
+    private $cacheable = false;
+
+    public function __construct()
+    {
+        if (extension_loaded('apc') || extension_loaded('apcu')) {
+            $this->cacheable = true;
+        }
+    }
 
     /**
      * Registers an autoloader related to the module
@@ -70,7 +82,7 @@ class Module implements ModuleDefinitionInterface
         if ($settings->get('config', false) == false) {
             $settings->offsetSet(
                 'config',
-                $configLoader->create($this::DIR . $this::CONFIG)
+                $this->loadConfig($this::DIR . $this::CONFIG, $configLoader)
             );
         }
 
@@ -80,9 +92,31 @@ class Module implements ModuleDefinitionInterface
              */
             $registrant = $dependencyInjector->get('registrant');
             $registrant->setServices(
-                $configLoader->create($this::DIR . $this::SERVICES)
+                $this->loadConfig($this::DIR . $this::SERVICES, $configLoader)
             );
             $registrant->registration();
         }
+    }
+
+    private function loadConfig($path, ConfigLoader $configLoader)
+    {
+        $id = md5($this::DIR . $this::NAME . $path);
+        $cache = null;
+
+        if ($this->cacheable === true) {
+            $cache = apc_fetch($id);
+        }
+
+        if ($cache === false || $cache === null) {
+            $config = $configLoader->create($path);
+
+            if ($cache === false) {
+                apc_add($id, $config);
+            }
+        } else {
+            $config = $cache;
+        }
+
+        return $config;
     }
 }

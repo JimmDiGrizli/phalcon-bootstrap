@@ -11,6 +11,7 @@ use Phalcon\DI\FactoryDefault;
 try {
 
     $app = new Bootstrap(new FactoryDefault());
+    $app->setPathConfig('../app/config/config_%environment%.ini');
     $app->setCacheable(false);
     echo $app->run();
     echo '<pre>';
