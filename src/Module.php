@@ -39,7 +39,7 @@ class Module implements ModuleDefinitionInterface
      * Use or not use the cache for module settings and configuration of services
      * @var bool
      */
-    private $cacheable = true;
+    protected $cacheable = true;
 
     public function __construct()
     {
