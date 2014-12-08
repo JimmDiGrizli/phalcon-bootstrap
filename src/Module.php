@@ -39,12 +39,16 @@ class Module implements ModuleDefinitionInterface
      * Use or not use the cache for module settings and configuration of services
      * @var bool
      */
-    private $cacheable = false;
+    private $cacheable = true;
 
     public function __construct()
     {
-        if (extension_loaded('apc') || extension_loaded('apcu')) {
-            $this->cacheable = true;
+        if ($this->cacheable === true) {
+            if (extension_loaded('apc') || extension_loaded('apcu')) {
+                $this->cacheable = true;
+            } else {
+                $this->cacheable = false;
+            }
         }
     }
 
